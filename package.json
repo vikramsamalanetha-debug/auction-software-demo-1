@@ -1,0 +1,10 @@
+{
+  "name": "hammerlist-auction-cataloging",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "validate": "node scripts/validate-artifact.mjs",
+    "qa": "npm run build && npm run validate && node scripts/qa.mjs"
+  }
+}
