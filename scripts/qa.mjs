@@ -10,7 +10,7 @@ globalThis.fetch = async url => {
 try {
   const env = { GEMINI_API_KEY: "test" };
   const home = await (await worker.fetch(new Request("https://hammerlist.test/"), env)).text();
-  for (const marker of ["Build the catalog once", "Request account setup", "Where will you upload or publish auction listings?", "HiBid", "Proxibid", "eBay", "Approved client access", "Create an auction", "What are you adding?", "Estate sale / household item", "Farm equipment", "Smart photo scan", "Choose photos", "24 photos", "Make cover", "Listing status", "Open camera & scan VIN", "Prepare catalog package"]) if (!home.includes(marker)) throw new Error(`Missing UI marker: ${marker}`);
+  for (const marker of ["Build the catalog once", "Request account setup", "Where will you upload or publish auction listings?", "HiBid", "Proxibid", "eBay", "Approved client access", "nativeLoginForm", "New auction company?", "Administration", "Admin portal", "Account requests", "Client accounts", "Approve & create client", "Configure account", "Create an auction", "What are you adding?", "Estate sale / household item", "Farm equipment", "Smart photo scan", "Choose photos", "24 photos", "Make cover", "Listing status", "Open camera & scan VIN", "Prepare catalog package"]) if (!home.includes(marker)) throw new Error(`Missing UI marker: ${marker}`);
   if (/Recognize with Gemini|providerLabel|Second opinion/.test(home)) throw new Error("AI provider name or removed second-opinion control leaked into the customer UI");
   const recognized = await worker.fetch(new Request("https://hammerlist.test/api/recognize", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ images: ["data:image/jpeg;base64,AA=="], engine: "primary" }) }), env);
   const recognizedBody = await recognized.json();
@@ -24,5 +24,5 @@ try {
   const download = await worker.fetch(new Request("https://hammerlist.test/downloads/HammerList-GitHub-Upload-Bundle.zip"), env);
   const downloadBytes = new Uint8Array(await download.arrayBuffer());
   if (download.status !== 200 || download.headers.get("content-disposition") !== "attachment; filename=\"HammerList-GitHub-Upload-Bundle.zip\"" || downloadBytes[0] !== 80 || downloadBytes[1] !== 75) throw new Error("Repository download route failed");
-  console.log("HammerList corporate UI, onboarding, provider masking, recognition, and VIN QA passed");
+  console.log("HammerList corporate UI, native access shell, administration, onboarding, provider masking, recognition, and VIN QA passed");
 } finally { globalThis.fetch = originalFetch; }
