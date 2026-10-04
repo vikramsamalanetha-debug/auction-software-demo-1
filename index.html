@@ -12,8 +12,9 @@
 @media(max-width:760px){.auth-view{display:flex;flex-direction:column;gap:32px;padding:calc(32px + env(safe-area-inset-top)) 16px 32px;background:var(--green)}.auth-brand{align-self:flex-start}.auth-card{margin-top:auto;padding:22px}.auth-card h1{font-size:32px}.topbar{height:calc(66px + env(safe-area-inset-top));padding-left:11px;padding-right:11px}.mobile-only{display:grid}.brand>div{display:none}.auction-switcher{min-width:0;flex:1}.auction-switcher span{display:none}.auction-switcher select{width:100%;min-width:0;font-size:13px}.shell{display:block}.sidebar{display:none;position:fixed;inset:calc(66px + env(safe-area-inset-top)) 0 0;z-index:25}.sidebar.open{display:flex}.main{padding:16px 12px 96px}.page-head{align-items:flex-start}.page-head h1{font-size:29px}.page-head .header-actions .secondary{display:none}.workflow-strip{grid-template-columns:repeat(4,140px);overflow-x:auto}.workflow-step{padding:13px}.stats{grid-template-columns:repeat(2,1fr)}.stat strong{font-size:24px}.filters{width:100%;flex-direction:column}.filters input,.filters select{width:100%;max-width:none}.panel-head{align-items:flex-start;flex-direction:column}.inventory-grid,.auction-grid{grid-template-columns:1fr}.mobile-add{display:block;position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:24;height:54px;border:0;border-radius:13px;background:var(--orange);color:#fff;font-weight:850;box-shadow:0 12px 30px #0003}.dialog{width:100vw;height:100dvh;max-height:none;border-radius:0}.dialog-head{padding-top:calc(16px + env(safe-area-inset-top))}.dialog-body{padding:16px}.dialog-foot{padding-bottom:max(16px,env(safe-area-inset-bottom))}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.photo-grid{grid-template-columns:repeat(2,1fr)}.photo-actions{grid-template-columns:1fr}.ai-actions{flex-direction:column}.ai-actions .btn{width:100%}.vin-row{grid-template-columns:1fr}.vin-row .btn{width:100%}.item-view-gallery{grid-template-columns:1fr 1fr}.item-view-gallery img,.item-view-gallery img:first-child{height:160px;grid-row:auto}.item-view-gallery img:first-child{grid-column:1/-1;height:240px}.detail-table{grid-template-columns:1fr 1fr}}
 .item-kind-picker{margin:0 0 16px;padding:0;border:0}.item-kind-picker legend{margin-bottom:9px;font-size:14px;font-weight:850}.item-kind-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item-kind-card{display:grid;grid-template-columns:auto 1fr;align-items:start;gap:10px;padding:14px;border:2px solid var(--line);border-radius:13px;background:#fff;cursor:pointer}.item-kind-card:has(input:checked){border-color:var(--green);background:#edf3ef}.item-kind-card input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--green)}.item-kind-card strong,.item-kind-card small{display:block}.item-kind-card small{margin-top:3px;color:var(--muted);font-weight:500;line-height:1.35}.vehicle-mode-hint{display:grid;gap:2px;margin-bottom:16px;padding:13px 15px;border-radius:12px;background:#f5f2e9;color:var(--green)}.vehicle-mode-hint span{color:var(--muted);font-size:13px}@media(max-width:760px){.item-kind-options{grid-template-columns:1fr}.item-kind-card{padding:12px}}
 .item-kind-options{grid-template-columns:repeat(3,1fr)}.vin-camera-card{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:13px;padding:16px;border:1px solid #c9d8cf;border-radius:14px;background:#edf3ef}.vin-camera-card strong,.vin-camera-card span{display:block}.vin-camera-card span{margin-top:3px;color:var(--muted);font-size:13px}.vin-camera-btn{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}.vin-camera-btn input{display:none}.vin-preview{display:flex;align-items:center;gap:11px;margin-bottom:13px;padding:9px;border-radius:11px;background:#f5f7f5;color:var(--green);font-size:13px;font-weight:800}.vin-preview img{width:76px;height:50px;border-radius:8px;object-fit:cover}.export-summary{margin-top:18px}.export-counts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.export-counts div{padding:13px;border-radius:11px;background:#f2f4f2;text-align:center}.export-counts strong,.export-counts span{display:block}.export-counts strong{font-size:24px}.export-counts span{color:var(--muted);font-size:12px}.export-warnings,.export-ready{margin-top:11px;padding:13px 15px;border-radius:11px}.export-warnings{background:#fff3e5;color:#704316}.export-warnings ul{margin:7px 0 0;padding-left:19px}.export-ready{background:#e5f1e9;color:#176041;font-weight:800}@media(max-width:760px){.item-kind-options{grid-template-columns:1fr}.vin-camera-card{align-items:stretch;flex-direction:column}.vin-camera-btn{width:100%}.page-head .header-actions [data-action="export"]{display:inline-flex!important;padding-inline:12px}.header-actions{gap:7px}}
-</style>
-</head><body>
+</style><style>.boot-view{display:none;position:fixed;inset:0;z-index:1000;place-content:center;justify-items:center;gap:8px;background:#123c31;color:#fff}.boot-view .brand-mark{margin-bottom:8px;background:#fff;color:#d95f35}.boot-view strong{letter-spacing:.12em}.boot-view small{color:#cfddd8}.booting .boot-view{display:grid}.booting #loginView,.booting #appView{display:none!important}</style>
+</head><body class="booting">
+<section id="bootView" class="boot-view"><span class="brand-mark">⚒</span><strong>HAMMERLIST</strong><small>Returning to your catalog…</small></section>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <section id="loginView" class="auth-view"><div class="auth-brand"><span class="brand-mark">⚒</span><div><strong>HAMMERLIST</strong><small>AUCTION OPERATIONS</small></div></div><div class="auth-card"><p class="eyebrow">Auctioneer access</p><h1>Welcome back</h1><p class="muted">Sign in to manage auctions, photograph inventory, and prepare lots.</p><form id="loginForm" class="stack"><label>Email<input id="loginEmail" type="email" value="auctioneer@hammerlist.app" autocomplete="username" required></label><label>Password<input id="loginPassword" type="password" value="demo123" autocomplete="current-password" required></label><button class="btn primary wide" type="submit">Sign in</button></form><div class="demo-access"><strong>Demo access</strong><span>auctioneer@hammerlist.app · demo123</span></div></div></section>
 <div id="appView" class="app hidden"><header class="topbar"><button class="icon-btn mobile-only" id="menuBtn" aria-label="Open navigation">☰</button><div class="brand"><span class="brand-mark">⚒</span><div><strong>HAMMERLIST</strong><small>AUCTION OPERATIONS</small></div></div><div class="auction-switcher"><span>Current auction</span><select id="auctionSelect" aria-label="Current auction"></select></div><button class="profile-btn" id="profileBtn" title="Sign out">KS</button></header><div class="shell"><aside id="sidebar" class="sidebar"><nav><button data-route="dashboard" class="nav-item active"><span>▦</span>Dashboard</button><button data-route="inventory" class="nav-item"><span>▤</span>Inventory</button><button data-route="auctions" class="nav-item"><span>◫</span>Auctions</button></nav><div class="side-foot"><small>Signed in as</small><strong id="signedInEmail"></strong><button class="text-btn" id="logoutBtn">Sign out</button></div></aside><main id="mainContent" class="main"></main></div><button id="mobileAdd" class="mobile-add hidden">＋ Add item</button></div>
@@ -28,7 +29,7 @@
 </div></fieldset>
 <div id="vehicleModeHint" class="vehicle-mode-hint hidden"><strong>Vehicle workflow selected</strong><span>Photograph the vehicle from every side. You can open the phone camera and scan the VIN on the next step.</span></div>
 <div id="farmModeHint" class="vehicle-mode-hint hidden"><strong>Farm equipment workflow selected</strong><span>Photograph the whole machine, manufacturer plate, model or serial number, hour meter, attachments, and visible wear.</span></div>
-<div id="photoGrid" class="photo-grid"></div><div class="photo-actions"><label id="takePhotoControl" class="photo-btn camera">📷 Take photo<input id="cameraInput" type="file" accept="image/*" capture="environment"></label><label id="choosePhotosControl" class="photo-btn">▧ Choose photos<input id="libraryInput" type="file" accept="image/*" multiple></label></div><p class="helper">Add up to 8 pictures. Several angles produce a stronger listing.</p><div id="photoError" class="error-box hidden"></div><div class="ai-actions"><button type="button" id="scanBtn" class="btn ai-btn">✦ Smart photo scan</button><button type="button" id="secondOpinionBtn" class="btn secondary">Second opinion</button></div>
+<div id="photoGrid" class="photo-grid"></div><div class="photo-actions"><label id="takePhotoControl" class="photo-btn camera">📷 Take photo<input id="cameraInput" type="file" accept="image/*" capture="environment"></label><label id="choosePhotosControl" class="photo-btn">▧ Choose photos<input id="libraryInput" type="file" accept="image/*" multiple></label></div><p class="helper">Add up to 8 pictures. Several angles produce a stronger listing.</p><div id="photoError" class="error-box hidden"></div><div class="ai-actions"><button type="button" id="scanBtn" class="btn ai-btn">✦ Smart photo scan</button></div>
 </div>
 <div id="detailsStep" class="dialog-body hidden"><div class="confidence-card"><div><small>HammerList suggestion</small><strong id="detectedName">Review item details</strong></div><span id="confidenceBadge" class="confidence">Not scanned</span></div><div class="form-grid"><label>Lot number<input id="lotNumber" type="number" min="1" required></label><label>Category<select id="itemCategory"><option>Farm Equipment</option><option>Household</option><option>Vehicles</option><option>Tools & Shop</option><option>Antiques</option><option>Miscellaneous</option></select></label><label class="full">Listing title<input id="itemTitle" required></label><label>Condition<select id="itemCondition"><option>Excellent</option><option>Good used condition</option><option>Fair</option><option>Needs repair</option><option>Unknown</option></select></label><label>Starting bid ($)<input id="startingBid" type="number" min="0" step="1"></label><label class="full">Description<textarea id="itemDescription" rows="4"></textarea></label></div>
 <section id="vehicleFields" class="vehicle-section hidden"><div class="section-heading"><div><p class="eyebrow">Vehicle details</p><h3>Scan VIN and fill vehicle information</h3></div><span class="gov-source">NHTSA vehicle data</span></div>
@@ -2007,7 +2008,7 @@
   }
   function setBusy(value, label = "Working\u2026") {
     working = value;
-    [$("#scanBtn"), $("#secondOpinionBtn"), $("#scanVinBtn"), $("#decodeVinBtn"), $("#vinCameraInput")].filter(Boolean).forEach((b) => {
+    [$("#scanBtn"), $("#scanVinBtn"), $("#decodeVinBtn"), $("#vinCameraInput")].filter(Boolean).forEach((b) => {
       b.disabled = value;
     });
     if (value) showToast(label);
@@ -2247,7 +2248,7 @@
       }
       applyAI(data);
       showDetailsStep();
-      showToast(mode === "device" ? "Photo recognized on this device \u2014 review the result" : mode === "demo" ? "Recognition unavailable \u2014 review the editable suggestion" : engine === "secondary" ? "Second opinion ready" : "Listing suggestion ready");
+      showToast(mode === "device" ? "Photo recognized on this device \u2014 review the result" : mode === "demo" ? "Recognition unavailable \u2014 review the editable suggestion" : "Listing suggestion ready");
     } catch (e) {
       showPhotoError(e.message || "The scan could not be completed.");
     } finally {
@@ -2512,11 +2513,16 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
     authStore.setItem("hammerlist-session", $("#loginEmail").value.trim());
     startApp();
   });
-  function startApp() {
+  function finishBoot() {
+    $("#bootView").classList.add("hidden");
+    document.body.classList.remove("booting");
+  }
+  function startApp(keepBoot = false) {
     $("#loginView").classList.add("hidden");
     $("#appView").classList.remove("hidden");
     $("#signedInEmail").textContent = authStore.getItem("hammerlist-session") || "auctioneer@hammerlist.app";
     render();
+    if (!keepBoot) finishBoot();
   }
   function logout() {
     authStore.removeItem("hammerlist-session");
@@ -2570,7 +2576,6 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
   $("#libraryInput").onchange = (e) => addFiles(e.target.files);
   $("#vinCameraInput").onchange = (e) => scanVinCamera(e.target.files);
   $("#scanBtn").onclick = () => runAI("primary");
-  $("#secondOpinionBtn").onclick = () => runAI("secondary");
   $("#continueBtn").onclick = showDetailsStep;
   $("#backItemBtn").onclick = showPhotoStep;
   $("#closeItem").onclick = () => $("#itemDialog").close();
@@ -2594,7 +2599,7 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
       await stateReady;
       if (!state) state = freshSeed();
       if (context.auctionId && state.auctions.some((a) => a.id === context.auctionId)) state.selectedAuctionId = context.auctionId;
-      if (authStore.getItem("hammerlist-session")) startApp();
+      if (authStore.getItem("hammerlist-session")) startApp(true);
       openItem();
       setItemKind(context.kind || "estate");
       if (context.action === "library") {
@@ -2613,6 +2618,7 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
       showToast(error.message || "The camera photo could not be restored.");
     } finally {
       clearPendingCamera();
+      finishBoot();
     }
   }
   if (isNative) {
@@ -2631,9 +2637,14 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
     App.addListener("appRestoredResult", restoreCameraResult);
   }
   stateReady.then(() => {
-    if (authStore.getItem("hammerlist-session")) startApp();
+    if (authStore.getItem("hammerlist-session")) {
+      const restoring = Boolean(pendingCamera());
+      startApp(restoring);
+      if (restoring) setTimeout(finishBoot, 5e3);
+    } else finishBoot();
   }).catch(() => {
     state = freshSeed();
+    finishBoot();
   });
 })();
 /*! Bundled license information:
