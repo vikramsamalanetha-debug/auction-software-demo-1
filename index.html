@@ -28,11 +28,11 @@
 </div></fieldset>
 <div id="vehicleModeHint" class="vehicle-mode-hint hidden"><strong>Vehicle workflow selected</strong><span>Photograph the vehicle from every side. You can open the phone camera and scan the VIN on the next step.</span></div>
 <div id="farmModeHint" class="vehicle-mode-hint hidden"><strong>Farm equipment workflow selected</strong><span>Photograph the whole machine, manufacturer plate, model or serial number, hour meter, attachments, and visible wear.</span></div>
-<div id="photoGrid" class="photo-grid"></div><div class="photo-actions"><label class="photo-btn camera">📷 Take photo<input id="cameraInput" type="file" accept="image/*" capture="environment"></label><label class="photo-btn">▧ Choose photos<input id="libraryInput" type="file" accept="image/*" multiple></label></div><p class="helper">Add up to 8 pictures. Several angles produce a stronger listing.</p><div id="photoError" class="error-box hidden"></div><div class="ai-actions"><button type="button" id="scanBtn" class="btn ai-btn">✦ Smart photo scan</button><button type="button" id="secondOpinionBtn" class="btn secondary">Second opinion</button></div>
+<div id="photoGrid" class="photo-grid"></div><div class="photo-actions"><label id="takePhotoControl" class="photo-btn camera">📷 Take photo<input id="cameraInput" type="file" accept="image/*" capture="environment"></label><label id="choosePhotosControl" class="photo-btn">▧ Choose photos<input id="libraryInput" type="file" accept="image/*" multiple></label></div><p class="helper">Add up to 8 pictures. Several angles produce a stronger listing.</p><div id="photoError" class="error-box hidden"></div><div class="ai-actions"><button type="button" id="scanBtn" class="btn ai-btn">✦ Smart photo scan</button><button type="button" id="secondOpinionBtn" class="btn secondary">Second opinion</button></div>
 </div>
 <div id="detailsStep" class="dialog-body hidden"><div class="confidence-card"><div><small>HammerList suggestion</small><strong id="detectedName">Review item details</strong></div><span id="confidenceBadge" class="confidence">Not scanned</span></div><div class="form-grid"><label>Lot number<input id="lotNumber" type="number" min="1" required></label><label>Category<select id="itemCategory"><option>Farm Equipment</option><option>Household</option><option>Vehicles</option><option>Tools & Shop</option><option>Antiques</option><option>Miscellaneous</option></select></label><label class="full">Listing title<input id="itemTitle" required></label><label>Condition<select id="itemCondition"><option>Excellent</option><option>Good used condition</option><option>Fair</option><option>Needs repair</option><option>Unknown</option></select></label><label>Starting bid ($)<input id="startingBid" type="number" min="0" step="1"></label><label class="full">Description<textarea id="itemDescription" rows="4"></textarea></label></div>
 <section id="vehicleFields" class="vehicle-section hidden"><div class="section-heading"><div><p class="eyebrow">Vehicle details</p><h3>Scan VIN and fill vehicle information</h3></div><span class="gov-source">NHTSA vehicle data</span></div>
-<div class="vin-camera-card"><div><strong>Use the phone camera</strong><span>Frame only the 17-character VIN plate, hold steady, and avoid glare.</span></div><label class="btn primary vin-camera-btn">📷 Open camera & scan VIN<input id="vinCameraInput" type="file" accept="image/*" capture="environment"></label></div>
+<div class="vin-camera-card"><div><strong>Use the phone camera</strong><span>Frame only the 17-character VIN plate, hold steady, and avoid glare.</span></div><label id="vinPhotoControl" class="btn primary vin-camera-btn">📷 Open camera & scan VIN<input id="vinCameraInput" type="file" accept="image/*" capture="environment"></label></div>
 <div id="vinPreview" class="vin-preview hidden"><img id="vinPreviewImage" alt="VIN plate preview"><span>VIN photo ready</span></div>
 <div class="vin-row"><input id="vinInput" maxlength="17" autocomplete="off" autocapitalize="characters" placeholder="Or enter the 17-character VIN"><button type="button" id="decodeVinBtn" class="btn dark">Decode VIN</button><button type="button" id="scanVinBtn" class="btn secondary">Scan item photos</button></div><p id="vinMessage" class="helper" aria-live="polite">Take a close VIN photo or enter the number manually. Successful scans automatically fill the fields below.</p>
 <div class="form-grid vehicle-grid"><label>Year<input id="vehicleYear"></label><label>Make<input id="vehicleMake"></label><label>Model<input id="vehicleModel"></label><label>Trim<input id="vehicleTrim"></label><label>Body style<input id="vehicleBody"></label><label>Engine<input id="vehicleEngine"></label><label>Drive type<input id="vehicleDrive"></label><label>Mileage<input id="vehicleMileage" type="number" min="0"></label></div></section></div>
@@ -44,81 +44,2485 @@
 <div class="dialog-body"><div class="form-grid"><label class="full">Destination<select id="exportPlatform"><option value="auctionflex">HiBid through Auction Flex</option><option value="proxibid">Proxibid spreadsheet</option><option value="ebay">eBay working file</option><option value="universal">Universal catalog CSV</option></select></label><label>Auction format<select id="exportBiddingType"><option>Online Only</option><option>Webcast</option><option>Absentee</option><option>Listing Only</option></select></label><label>Buyer’s premium (%)<input id="exportPremium" type="number" min="0" max="100" step="0.1" value="15"></label><label>Lot stagger (seconds)<input id="exportStagger" type="number" min="0" value="10"></label><label>Soft close (minutes)<input id="exportSoftClose" type="number" min="0" value="2"></label><label class="full">Pickup / shipping instructions<textarea id="exportPickup" rows="2" placeholder="Pickup location, dates, shipping availability"></textarea></label><label class="full">Terms and conditions<textarea id="exportTerms" rows="3" placeholder="Auction registration, payment, pickup, title, and as-is terms"></textarea></label></div><div id="exportSummary" class="export-summary"></div><p class="helper">The ZIP includes catalog data, platform settings, named photos, and a photo manifest. Direct publishing requires the auction company’s authorized account connection.</p></div>
 <footer class="dialog-foot"><button type="button" class="btn secondary" data-close="exportDialog">Cancel</button><span class="spacer"></span><button type="submit" class="btn primary">Download catalog ZIP</button></footer>
 </form></dialog>
-<script>const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
-const uid=()=>typeof crypto!=="undefined"&&typeof crypto.randomUUID==="function"?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`;
-const seed={selectedAuctionId:"auction-1",auctions:[{id:"auction-1",name:"Johnson Farm & Estate Auction",type:"Mixed",date:"2026-10-10",location:"Lexington, Tennessee",status:"Cataloging",nextLot:129,items:[
-{id:"lot-126",lot:126,title:"1937 John Deere AR Tractor",category:"Farm Equipment",condition:"Good used condition",startingBid:2500,description:"Two-cylinder row-crop tractor. Verify serial number, operating condition, and restoration history before publishing.",confidence:94,status:"Ready",photos:["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9Ijc2MCIgdmlld0JveD0iMCAwIDEyMDAgNzYwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI3NjAiIGZpbGw9IiNkOGRmYzAiLz48Y2lyY2xlIGN4PSI5NzUiIGN5PSIxNDUiIHI9IjE5MCIgZmlsbD0iIzdjOTUyYiIgb3BhY2l0eT0iLjI1Ii8+PHBhdGggZD0iTTAgNjEwTDI4MCA0MzBsMjMwIDExNSAyMjUtMjEwIDQ2NSAzMDB2MTI1SDB6IiBmaWxsPSIjN2M5NTJiIiBvcGFjaXR5PSIuMzMiLz48cmVjdCB4PSI3MiIgeT0iNTEwIiB3aWR0aD0iNzAwIiBoZWlnaHQ9IjE1MCIgcng9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz48dGV4dCB4PSIxMTIiIHk9IjU3NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxMjNjMzEiPjE5MzcgSm9obiBEZWVyZSBBUjwvdGV4dD48dGV4dCB4PSIxMTIiIHk9IjYyNCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjciIGZpbGw9IiM1MzYzNWUiPkZhcm0gZXF1aXBtZW50IGNhdGFsb2cgZXhhbXBsZTwvdGV4dD48L3N2Zz4="],createdAt:"2026-09-18T10:00:00Z"},
-{id:"lot-127",lot:127,title:"Hand-carved French Oak Cabinet",category:"Antiques",condition:"Good used condition",startingBid:325,description:"Tall carved oak display cabinet with glazed door and fitted shelves. Inspect hardware and finish for age-related wear.",confidence:88,status:"Ready",photos:["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9Ijc2MCIgdmlld0JveD0iMCAwIDEyMDAgNzYwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI3NjAiIGZpbGw9IiNlYWRiYzYiLz48Y2lyY2xlIGN4PSI5NzUiIGN5PSIxNDUiIHI9IjE5MCIgZmlsbD0iIzlhNjAzYyIgb3BhY2l0eT0iLjI1Ii8+PHBhdGggZD0iTTAgNjEwTDI4MCA0MzBsMjMwIDExNSAyMjUtMjEwIDQ2NSAzMDB2MTI1SDB6IiBmaWxsPSIjOWE2MDNjIiBvcGFjaXR5PSIuMzMiLz48cmVjdCB4PSI3MiIgeT0iNTEwIiB3aWR0aD0iNzAwIiBoZWlnaHQ9IjE1MCIgcng9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz48dGV4dCB4PSIxMTIiIHk9IjU3NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxMjNjMzEiPkZyZW5jaCBPYWsgQ2FiaW5ldDwvdGV4dD48dGV4dCB4PSIxMTIiIHk9IjYyNCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjciIGZpbGw9IiM1MzYzNWUiPkVzdGF0ZSBhbmQgYW50aXF1ZSBjYXRhbG9nIGV4YW1wbGU8L3RleHQ+PC9zdmc+"],createdAt:"2026-09-18T10:10:00Z"},
-{id:"lot-128",lot:128,title:"1972 Ford F-250 Pickup",category:"Vehicles",condition:"Fair",startingBid:1800,description:"Vintage Ford pickup. Verify VIN, mileage, title status, engine, and running condition before publishing.",confidence:91,status:"Ready",photos:["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9Ijc2MCIgdmlld0JveD0iMCAwIDEyMDAgNzYwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI3NjAiIGZpbGw9IiNjYmQ5ZGYiLz48Y2lyY2xlIGN4PSI5NzUiIGN5PSIxNDUiIHI9IjE5MCIgZmlsbD0iIzQ0NzY4YyIgb3BhY2l0eT0iLjI1Ii8+PHBhdGggZD0iTTAgNjEwTDI4MCA0MzBsMjMwIDExNSAyMjUtMjEwIDQ2NSAzMDB2MTI1SDB6IiBmaWxsPSIjNDQ3NjhjIiBvcGFjaXR5PSIuMzMiLz48cmVjdCB4PSI3MiIgeT0iNTEwIiB3aWR0aD0iNzAwIiBoZWlnaHQ9IjE1MCIgcng9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz48dGV4dCB4PSIxMTIiIHk9IjU3NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxMjNjMzEiPjE5NzIgRm9yZCBGLTI1MDwvdGV4dD48dGV4dCB4PSIxMTIiIHk9IjYyNCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjciIGZpbGw9IiM1MzYzNWUiPlZlaGljbGUgYXVjdGlvbiBjYXRhbG9nIGV4YW1wbGU8L3RleHQ+PC9zdmc+"],vin:"",year:"1972",make:"Ford",model:"F-250",trim:"",body:"Pickup",engine:"",drive:"",mileage:"",createdAt:"2026-09-18T10:20:00Z"}]}]};
-let state=null,route="dashboard",draftPhotos=[],vinPhoto="",working=false,visionModelPromise=null;
+<script>globalThis.HAMMERLIST_API_BASE_URL="";
+(() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __esm = (fn, res) => function __init() {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  };
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
 
-function db(){return new Promise((resolve,reject)=>{const r=indexedDB.open("hammerlist-demo",1);r.onupgradeneeded=()=>r.result.createObjectStore("app");r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
-const freshSeed=()=>typeof structuredClone==="function"?structuredClone(seed):JSON.parse(JSON.stringify(seed));
-async function loadState(){try{const d=await db();state=await new Promise((resolve,reject)=>{const t=d.transaction("app","readonly").objectStore("app").get("state");t.onsuccess=()=>resolve(t.result);t.onerror=()=>reject(t.error)});d.close()}catch{}if(!state)state=freshSeed()}
-async function saveState(){try{const d=await db();await new Promise((resolve,reject)=>{const t=d.transaction("app","readwrite").objectStore("app").put(state,"state");t.onsuccess=resolve;t.onerror=()=>reject(t.error)});d.close()}catch(e){showToast("Could not save on this device. Check available storage.")}}
-function currentAuction(){return state.auctions.find(a=>a.id===state.selectedAuctionId)||null}
-function showToast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove("show"),2800)}
-function fmtDate(v){if(!v)return"Date not set";return new Date(`${v}T12:00:00`).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}
-function money(v){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(Number(v)||0)}
-function setBusy(value,label="Working…"){working=value;[$("#scanBtn"),$("#secondOpinionBtn"),$("#scanVinBtn"),$("#decodeVinBtn"),$("#vinCameraInput")].filter(Boolean).forEach(b=>{b.disabled=value});if(value)showToast(label)}
+  // node_modules/@capacitor/core/dist/index.js
+  var ExceptionCode, CapacitorException, getPlatformId, createCapacitor, initCapacitorGlobal, Capacitor, registerPlugin, WebPlugin, encode, decode, CapacitorCookiesPluginWeb, CapacitorCookies, readBlobAsBase64, normalizeHttpHeaders, buildUrlParams, buildRequestInit, CapacitorHttpPluginWeb, CapacitorHttp, SystemBarsStyle, SystemBarType, SystemBarsPluginWeb, SystemBars;
+  var init_dist = __esm({
+    "node_modules/@capacitor/core/dist/index.js"() {
+      (function(ExceptionCode2) {
+        ExceptionCode2["Unimplemented"] = "UNIMPLEMENTED";
+        ExceptionCode2["Unavailable"] = "UNAVAILABLE";
+      })(ExceptionCode || (ExceptionCode = {}));
+      CapacitorException = class extends Error {
+        constructor(message, code, data) {
+          super(message);
+          this.message = message;
+          this.code = code;
+          this.data = data;
+        }
+      };
+      getPlatformId = (win) => {
+        var _a, _b;
+        if (win === null || win === void 0 ? void 0 : win.androidBridge) {
+          return "android";
+        } else if ((_b = (_a = win === null || win === void 0 ? void 0 : win.webkit) === null || _a === void 0 ? void 0 : _a.messageHandlers) === null || _b === void 0 ? void 0 : _b.bridge) {
+          return "ios";
+        } else {
+          return "web";
+        }
+      };
+      createCapacitor = (win) => {
+        const capCustomPlatform = win.CapacitorCustomPlatform || null;
+        const cap = win.Capacitor || {};
+        const Plugins = cap.Plugins = cap.Plugins || {};
+        const getPlatform = () => {
+          return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
+        };
+        const isNativePlatform = () => getPlatform() !== "web";
+        const isPluginAvailable = (pluginName) => {
+          const plugin = registeredPlugins.get(pluginName);
+          if (plugin === null || plugin === void 0 ? void 0 : plugin.platforms.has(getPlatform())) {
+            return true;
+          }
+          if (getPluginHeader(pluginName)) {
+            return true;
+          }
+          return false;
+        };
+        const getPluginHeader = (pluginName) => {
+          var _a;
+          return (_a = cap.PluginHeaders) === null || _a === void 0 ? void 0 : _a.find((h) => h.name === pluginName);
+        };
+        const handleError = (err) => win.console.error(err);
+        const registeredPlugins = /* @__PURE__ */ new Map();
+        const registerPlugin2 = (pluginName, jsImplementations = {}) => {
+          const registeredPlugin = registeredPlugins.get(pluginName);
+          if (registeredPlugin) {
+            console.warn(`Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`);
+            return registeredPlugin.proxy;
+          }
+          const platform = getPlatform();
+          const pluginHeader = getPluginHeader(pluginName);
+          let jsImplementation;
+          const loadPluginImplementation = async () => {
+            if (!jsImplementation && platform in jsImplementations) {
+              jsImplementation = typeof jsImplementations[platform] === "function" ? jsImplementation = await jsImplementations[platform]() : jsImplementation = jsImplementations[platform];
+            } else if (capCustomPlatform !== null && !jsImplementation && "web" in jsImplementations) {
+              jsImplementation = typeof jsImplementations["web"] === "function" ? jsImplementation = await jsImplementations["web"]() : jsImplementation = jsImplementations["web"];
+            }
+            return jsImplementation;
+          };
+          const createPluginMethod = (impl, prop) => {
+            var _a, _b;
+            if (pluginHeader) {
+              const methodHeader = pluginHeader === null || pluginHeader === void 0 ? void 0 : pluginHeader.methods.find((m) => prop === m.name);
+              if (methodHeader) {
+                if (methodHeader.rtype === "promise") {
+                  return (options) => cap.nativePromise(pluginName, prop.toString(), options);
+                } else {
+                  return (options, callback) => cap.nativeCallback(pluginName, prop.toString(), options, callback);
+                }
+              } else if (impl) {
+                return (_a = impl[prop]) === null || _a === void 0 ? void 0 : _a.bind(impl);
+              }
+            } else if (impl) {
+              return (_b = impl[prop]) === null || _b === void 0 ? void 0 : _b.bind(impl);
+            } else {
+              throw new CapacitorException(`"${pluginName}" plugin is not implemented on ${platform}`, ExceptionCode.Unimplemented);
+            }
+          };
+          const createPluginMethodWrapper = (prop) => {
+            let remove;
+            const wrapper = (...args) => {
+              const p = loadPluginImplementation().then((impl) => {
+                const fn = createPluginMethod(impl, prop);
+                if (fn) {
+                  const p2 = fn(...args);
+                  remove = p2 === null || p2 === void 0 ? void 0 : p2.remove;
+                  return p2;
+                } else {
+                  throw new CapacitorException(`"${pluginName}.${prop}()" is not implemented on ${platform}`, ExceptionCode.Unimplemented);
+                }
+              });
+              if (prop === "addListener") {
+                p.remove = async () => remove();
+              }
+              return p;
+            };
+            wrapper.toString = () => `${prop.toString()}() { [capacitor code] }`;
+            Object.defineProperty(wrapper, "name", {
+              value: prop,
+              writable: false,
+              configurable: false
+            });
+            return wrapper;
+          };
+          const addListener = createPluginMethodWrapper("addListener");
+          const removeListener = createPluginMethodWrapper("removeListener");
+          const addListenerNative = (eventName, callback) => {
+            const call = addListener({ eventName }, callback);
+            const remove = async () => {
+              const callbackId = await call;
+              removeListener({
+                eventName,
+                callbackId
+              }, callback);
+            };
+            const p = new Promise((resolve2) => call.then(() => resolve2({ remove })));
+            p.remove = async () => {
+              console.warn(`Using addListener() without 'await' is deprecated.`);
+              await remove();
+            };
+            return p;
+          };
+          const proxy = new Proxy({}, {
+            get(_, prop) {
+              switch (prop) {
+                // https://github.com/facebook/react/issues/20030
+                case "$$typeof":
+                  return void 0;
+                case "toJSON":
+                  return () => ({});
+                case "addListener":
+                  return pluginHeader ? addListenerNative : addListener;
+                case "removeListener":
+                  return removeListener;
+                default:
+                  return createPluginMethodWrapper(prop);
+              }
+            }
+          });
+          Plugins[pluginName] = proxy;
+          registeredPlugins.set(pluginName, {
+            name: pluginName,
+            proxy,
+            platforms: /* @__PURE__ */ new Set([...Object.keys(jsImplementations), ...pluginHeader ? [platform] : []])
+          });
+          return proxy;
+        };
+        if (!cap.convertFileSrc) {
+          cap.convertFileSrc = (filePath) => filePath;
+        }
+        cap.getPlatform = getPlatform;
+        cap.handleError = handleError;
+        cap.isNativePlatform = isNativePlatform;
+        cap.isPluginAvailable = isPluginAvailable;
+        cap.registerPlugin = registerPlugin2;
+        cap.Exception = CapacitorException;
+        cap.DEBUG = !!cap.DEBUG;
+        cap.isLoggingEnabled = !!cap.isLoggingEnabled;
+        return cap;
+      };
+      initCapacitorGlobal = (win) => win.Capacitor = createCapacitor(win);
+      Capacitor = /* @__PURE__ */ initCapacitorGlobal(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {});
+      registerPlugin = Capacitor.registerPlugin;
+      WebPlugin = class {
+        constructor() {
+          this.listeners = {};
+          this.retainedEventArguments = {};
+          this.windowListeners = {};
+        }
+        addListener(eventName, listenerFunc) {
+          let firstListener = false;
+          const listeners = this.listeners[eventName];
+          if (!listeners) {
+            this.listeners[eventName] = [];
+            firstListener = true;
+          }
+          this.listeners[eventName].push(listenerFunc);
+          const windowListener = this.windowListeners[eventName];
+          if (windowListener && !windowListener.registered) {
+            this.addWindowListener(windowListener);
+          }
+          if (firstListener) {
+            this.sendRetainedArgumentsForEvent(eventName);
+          }
+          const remove = async () => this.removeListener(eventName, listenerFunc);
+          const p = Promise.resolve({ remove });
+          return p;
+        }
+        async removeAllListeners() {
+          this.listeners = {};
+          for (const listener in this.windowListeners) {
+            this.removeWindowListener(this.windowListeners[listener]);
+          }
+          this.windowListeners = {};
+        }
+        notifyListeners(eventName, data, retainUntilConsumed) {
+          const listeners = this.listeners[eventName];
+          if (!listeners) {
+            if (retainUntilConsumed) {
+              let args = this.retainedEventArguments[eventName];
+              if (!args) {
+                args = [];
+              }
+              args.push(data);
+              this.retainedEventArguments[eventName] = args;
+            }
+            return;
+          }
+          listeners.forEach((listener) => listener(data));
+        }
+        hasListeners(eventName) {
+          var _a;
+          return !!((_a = this.listeners[eventName]) === null || _a === void 0 ? void 0 : _a.length);
+        }
+        registerWindowListener(windowEventName, pluginEventName) {
+          this.windowListeners[pluginEventName] = {
+            registered: false,
+            windowEventName,
+            pluginEventName,
+            handler: (event) => {
+              this.notifyListeners(pluginEventName, event);
+            }
+          };
+        }
+        unimplemented(msg = "not implemented") {
+          return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
+        }
+        unavailable(msg = "not available") {
+          return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
+        }
+        async removeListener(eventName, listenerFunc) {
+          const listeners = this.listeners[eventName];
+          if (!listeners) {
+            return;
+          }
+          const index = listeners.indexOf(listenerFunc);
+          if (index !== -1) {
+            this.listeners[eventName].splice(index, 1);
+          }
+          if (!this.listeners[eventName].length) {
+            this.removeWindowListener(this.windowListeners[eventName]);
+          }
+        }
+        addWindowListener(handle) {
+          window.addEventListener(handle.windowEventName, handle.handler);
+          handle.registered = true;
+        }
+        removeWindowListener(handle) {
+          if (!handle) {
+            return;
+          }
+          window.removeEventListener(handle.windowEventName, handle.handler);
+          handle.registered = false;
+        }
+        sendRetainedArgumentsForEvent(eventName) {
+          const args = this.retainedEventArguments[eventName];
+          if (!args) {
+            return;
+          }
+          delete this.retainedEventArguments[eventName];
+          args.forEach((arg) => {
+            this.notifyListeners(eventName, arg);
+          });
+        }
+      };
+      encode = (str) => encodeURIComponent(str).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
+      decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+      CapacitorCookiesPluginWeb = class extends WebPlugin {
+        async getCookies() {
+          const cookies = document.cookie;
+          const cookieMap = {};
+          cookies.split(";").forEach((cookie) => {
+            if (cookie.length <= 0)
+              return;
+            let [key, value] = cookie.replace(/=/, "CAP_COOKIE").split("CAP_COOKIE");
+            key = decode(key).trim();
+            value = decode(value).trim();
+            cookieMap[key] = value;
+          });
+          return cookieMap;
+        }
+        async setCookie(options) {
+          try {
+            const encodedKey = encode(options.key);
+            const encodedValue = encode(options.value);
+            const expires = options.expires ? `; expires=${options.expires.replace("expires=", "")}` : "";
+            const path = (options.path || "/").replace("path=", "");
+            const domain = options.url != null && options.url.length > 0 ? `domain=${options.url}` : "";
+            document.cookie = `${encodedKey}=${encodedValue || ""}${expires}; path=${path}; ${domain};`;
+          } catch (error) {
+            return Promise.reject(error);
+          }
+        }
+        async deleteCookie(options) {
+          try {
+            document.cookie = `${options.key}=; Max-Age=0`;
+          } catch (error) {
+            return Promise.reject(error);
+          }
+        }
+        async clearCookies() {
+          try {
+            const cookies = document.cookie.split(";") || [];
+            for (const cookie of cookies) {
+              document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${(/* @__PURE__ */ new Date()).toUTCString()};path=/`);
+            }
+          } catch (error) {
+            return Promise.reject(error);
+          }
+        }
+        async clearAllCookies() {
+          try {
+            await this.clearCookies();
+          } catch (error) {
+            return Promise.reject(error);
+          }
+        }
+      };
+      CapacitorCookies = registerPlugin("CapacitorCookies", {
+        web: () => new CapacitorCookiesPluginWeb()
+      });
+      readBlobAsBase64 = async (blob) => new Promise((resolve2, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = reader.result;
+          resolve2(base64String.indexOf(",") >= 0 ? base64String.split(",")[1] : base64String);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(blob);
+      });
+      normalizeHttpHeaders = (headers = {}) => {
+        const originalKeys = Object.keys(headers);
+        const loweredKeys = Object.keys(headers).map((k) => k.toLocaleLowerCase());
+        const normalized = loweredKeys.reduce((acc, key, index) => {
+          acc[key] = headers[originalKeys[index]];
+          return acc;
+        }, {});
+        return normalized;
+      };
+      buildUrlParams = (params, shouldEncode = true) => {
+        if (!params)
+          return null;
+        const output = Object.entries(params).reduce((accumulator, entry) => {
+          const [key, value] = entry;
+          let encodedValue;
+          let item;
+          if (Array.isArray(value)) {
+            item = "";
+            value.forEach((str) => {
+              encodedValue = shouldEncode ? encodeURIComponent(str) : str;
+              item += `${key}=${encodedValue}&`;
+            });
+            item.slice(0, -1);
+          } else {
+            encodedValue = shouldEncode ? encodeURIComponent(value) : value;
+            item = `${key}=${encodedValue}`;
+          }
+          return `${accumulator}&${item}`;
+        }, "");
+        return output.substr(1);
+      };
+      buildRequestInit = (options, extra = {}) => {
+        const output = Object.assign({ method: options.method || "GET", headers: options.headers }, extra);
+        const headers = normalizeHttpHeaders(options.headers);
+        const type = headers["content-type"] || "";
+        if (typeof options.data === "string") {
+          output.body = options.data;
+        } else if (type.includes("application/x-www-form-urlencoded")) {
+          const params = new URLSearchParams();
+          for (const [key, value] of Object.entries(options.data || {})) {
+            params.set(key, value);
+          }
+          output.body = params.toString();
+        } else if (type.includes("multipart/form-data") || options.data instanceof FormData) {
+          const form = new FormData();
+          if (options.data instanceof FormData) {
+            options.data.forEach((value, key) => {
+              form.append(key, value);
+            });
+          } else {
+            for (const key of Object.keys(options.data)) {
+              form.append(key, options.data[key]);
+            }
+          }
+          output.body = form;
+          const headers2 = new Headers(output.headers);
+          headers2.delete("content-type");
+          output.headers = headers2;
+        } else if (type.includes("application/json") || typeof options.data === "object") {
+          output.body = JSON.stringify(options.data);
+        }
+        return output;
+      };
+      CapacitorHttpPluginWeb = class extends WebPlugin {
+        /**
+         * Perform an Http request given a set of options
+         * @param options Options to build the HTTP request
+         */
+        async request(options) {
+          const requestInit = buildRequestInit(options, options.webFetchExtra);
+          const urlParams = buildUrlParams(options.params, options.shouldEncodeUrlParams);
+          const url = urlParams ? `${options.url}?${urlParams}` : options.url;
+          const response = await fetch(url, requestInit);
+          const contentType = response.headers.get("content-type") || "";
+          let { responseType = "text" } = response.ok ? options : {};
+          if (contentType.includes("application/json")) {
+            responseType = "json";
+          }
+          let data;
+          let blob;
+          switch (responseType) {
+            case "arraybuffer":
+            case "blob":
+              blob = await response.blob();
+              data = await readBlobAsBase64(blob);
+              break;
+            case "json":
+              data = await response.json();
+              break;
+            case "document":
+            case "text":
+            default:
+              data = await response.text();
+          }
+          const headers = {};
+          response.headers.forEach((value, key) => {
+            headers[key] = value;
+          });
+          return {
+            data,
+            headers,
+            status: response.status,
+            url: response.url
+          };
+        }
+        /**
+         * Perform an Http GET request given a set of options
+         * @param options Options to build the HTTP request
+         */
+        async get(options) {
+          return this.request(Object.assign(Object.assign({}, options), { method: "GET" }));
+        }
+        /**
+         * Perform an Http POST request given a set of options
+         * @param options Options to build the HTTP request
+         */
+        async post(options) {
+          return this.request(Object.assign(Object.assign({}, options), { method: "POST" }));
+        }
+        /**
+         * Perform an Http PUT request given a set of options
+         * @param options Options to build the HTTP request
+         */
+        async put(options) {
+          return this.request(Object.assign(Object.assign({}, options), { method: "PUT" }));
+        }
+        /**
+         * Perform an Http PATCH request given a set of options
+         * @param options Options to build the HTTP request
+         */
+        async patch(options) {
+          return this.request(Object.assign(Object.assign({}, options), { method: "PATCH" }));
+        }
+        /**
+         * Perform an Http DELETE request given a set of options
+         * @param options Options to build the HTTP request
+         */
+        async delete(options) {
+          return this.request(Object.assign(Object.assign({}, options), { method: "DELETE" }));
+        }
+      };
+      CapacitorHttp = registerPlugin("CapacitorHttp", {
+        web: () => new CapacitorHttpPluginWeb()
+      });
+      (function(SystemBarsStyle2) {
+        SystemBarsStyle2["Dark"] = "DARK";
+        SystemBarsStyle2["Light"] = "LIGHT";
+        SystemBarsStyle2["Default"] = "DEFAULT";
+      })(SystemBarsStyle || (SystemBarsStyle = {}));
+      (function(SystemBarType2) {
+        SystemBarType2["StatusBar"] = "StatusBar";
+        SystemBarType2["NavigationBar"] = "NavigationBar";
+      })(SystemBarType || (SystemBarType = {}));
+      SystemBarsPluginWeb = class extends WebPlugin {
+        async setStyle() {
+          this.unavailable("not available for web");
+        }
+        async setAnimation() {
+          this.unavailable("not available for web");
+        }
+        async show() {
+          this.unavailable("not available for web");
+        }
+        async hide() {
+          this.unavailable("not available for web");
+        }
+      };
+      SystemBars = registerPlugin("SystemBars", {
+        web: () => new SystemBarsPluginWeb()
+      });
+    }
+  });
 
-function render(){const auction=currentAuction();$("#auctionSelect").innerHTML=state.auctions.length?state.auctions.map(a=>`<option value="${a.id}" ${a.id===state.selectedAuctionId?"selected":""}>${esc(a.name)}</option>`).join(""):`<option>No auctions yet</option>`;$$('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.route===route));$("#mobileAdd").classList.toggle("hidden",!auction||route==="auctions");if(route==="auctions")renderAuctions();else if(!auction)renderNoAuction();else renderWorkspace(auction,route==="inventory")}
-function renderNoAuction(){$("#mainContent").innerHTML=`<section class="setup-card"><div><p class="eyebrow">Get started</p><h2>Create your first auction</h2><p>Name the sale, choose its type, and HammerList will prepare the right catalog fields.</p><button class="btn primary" data-action="new-auction">Create auction</button></div></section>`}
-function workflow(a){const total=a.items.length;const ready=a.items.filter(i=>i.status==="Ready").length;return`<div class="workflow-strip"><div class="workflow-step active"><strong>1</strong><span>Auction created</span></div><div class="workflow-step ${total?"active":""}"><strong>2</strong><span>Catalog items</span></div><div class="workflow-step ${ready&&ready===total?"active":""}"><strong>3</strong><span>Review lots</span></div><div class="workflow-step ${a.status==="Ready"?"active":""}"><strong>4</strong><span>Publish ready</span></div></div>`}
-function renderWorkspace(a,inventoryOnly=false){const items=a.items||[],ready=items.filter(i=>i.status==="Ready").length,categories=new Set(items.map(i=>i.category)).size;$("#mainContent").innerHTML=`<header class="page-head"><div><p class="eyebrow">${esc(a.type)} auction</p><h1>${inventoryOnly?"Inventory":esc(a.name)}</h1><p class="muted">${inventoryOnly?esc(a.name):`${fmtDate(a.date)} · ${esc(a.location)}`}</p></div><div class="header-actions"><button class="btn secondary" data-action="auctions">Switch auction</button><button class="btn secondary" data-action="export">Export / publish</button><button class="btn primary" data-action="add-item">＋ Add item</button></div></header>${inventoryOnly?"":workflow(a)}<div class="stats"><div class="stat"><small>Total lots</small><strong>${items.length}</strong></div><div class="stat"><small>Ready</small><strong>${ready}</strong></div><div class="stat"><small>Categories</small><strong>${categories}</strong></div><div class="stat"><small>Next lot</small><strong>#${a.nextLot}</strong></div></div><div class="content-grid"><section class="panel"><div class="panel-head"><h2>${inventoryOnly?"All inventory":"Recent inventory"}</h2><div class="filters"><input id="itemSearch" placeholder="Search lots"><select id="categoryFilter"><option value="">All categories</option>${["Farm Equipment","Household","Vehicles","Tools & Shop","Antiques","Miscellaneous"].map(c=>`<option>${c}</option>`).join("")}</select></div></div><div id="inventoryGrid" class="inventory-grid"></div></section><aside class="panel side-panel"><h2>Auction activity</h2><div class="activity"><div class="activity-item"><span class="activity-icon">▦</span><div><strong>${items.length} lots cataloged</strong><small>${ready} ready for review</small></div></div><div class="activity-item"><span class="activity-icon">◎</span><div><strong>${esc(a.status)}</strong><small>Current auction status</small></div></div><div class="activity-item"><span class="activity-icon">#</span><div><strong>Lot ${a.nextLot} next</strong><small>Numbered automatically</small></div></div></div></aside></div>`;renderItems(items);$("#itemSearch").addEventListener("input",filterItems);$("#categoryFilter").addEventListener("change",filterItems)}
-function renderItems(items){const grid=$("#inventoryGrid");if(!items.length){grid.innerHTML=`<div class="empty-state"><strong>No items yet</strong>Take photos of the first item to begin this catalog.</div>`;return}grid.innerHTML=items.slice().sort((a,b)=>b.lot-a.lot).map(i=>`<article class="lot-card" data-item="${i.id}" tabindex="0"><div class="lot-image"><img src="${i.photos?.[0]||""}" alt=""><span class="photo-count">▧ ${i.photos?.length||0}</span></div><div class="lot-body"><div class="lot-meta"><span>Lot ${i.lot}</span><span>${esc(i.category)}</span></div><h3>${esc(i.title)}</h3><footer class="lot-foot"><span class="badge">${esc(i.status||"Draft")}</span><span class="price">${money(i.startingBid)}</span></footer></div></article>`).join("")}
-function filterItems(){const a=currentAuction(),q=$("#itemSearch").value.toLowerCase(),c=$("#categoryFilter").value;renderItems(a.items.filter(i=>(!c||i.category===c)&&(!q||`${i.title} ${i.lot} ${i.category}`.toLowerCase().includes(q))))}
-function renderAuctions(){$("#mainContent").innerHTML=`<header class="page-head"><div><p class="eyebrow">Auction management</p><h1>Your auctions</h1><p class="muted">Create a sale or reopen a catalog already in progress.</p></div><button class="btn primary" data-action="new-auction">＋ New auction</button></header><div class="auction-grid">${state.auctions.map(a=>`<article class="auction-card ${a.id===state.selectedAuctionId?"current":""}"><span class="auction-type">${esc(a.type)}</span><h3>${esc(a.name)}</h3><p class="muted">${fmtDate(a.date)} · ${esc(a.location||"Location not set")}</p><div class="lot-meta"><span>${a.items.length} lots</span><span>${esc(a.status)}</span></div><footer><button class="btn ${a.id===state.selectedAuctionId?"secondary":"dark"}" data-select-auction="${a.id}">${a.id===state.selectedAuctionId?"Current":"Open auction"}</button></footer></article>`).join("")}<button class="setup-card" data-action="new-auction"><div><strong>＋</strong><h2>Create another auction</h2><p>Estate sale, farm, vehicle, or mixed inventory.</p></div></button></div>`}
+  // node_modules/@capacitor/filesystem/dist/esm/definitions.js
+  var Directory, Encoding;
+  var init_definitions = __esm({
+    "node_modules/@capacitor/filesystem/dist/esm/definitions.js"() {
+      (function(Directory2) {
+        Directory2["Documents"] = "DOCUMENTS";
+        Directory2["Data"] = "DATA";
+        Directory2["Library"] = "LIBRARY";
+        Directory2["Cache"] = "CACHE";
+        Directory2["External"] = "EXTERNAL";
+        Directory2["ExternalStorage"] = "EXTERNAL_STORAGE";
+        Directory2["ExternalCache"] = "EXTERNAL_CACHE";
+        Directory2["LibraryNoCloud"] = "LIBRARY_NO_CLOUD";
+        Directory2["Temporary"] = "TEMPORARY";
+      })(Directory || (Directory = {}));
+      (function(Encoding2) {
+        Encoding2["UTF8"] = "utf8";
+        Encoding2["ASCII"] = "ascii";
+        Encoding2["UTF16"] = "utf16";
+      })(Encoding || (Encoding = {}));
+    }
+  });
 
-function openAuctionDialog(){const d=new Date(Date.now()+14*864e5);$("#auctionDate").value=d.toISOString().slice(0,10);$("#auctionDialog").showModal()}
-async function createAuction(e){e.preventDefault();const a={id:uid(),name:$("#auctionName").value.trim(),type:$("#auctionType").value,date:$("#auctionDate").value,location:$("#auctionLocation").value.trim(),status:$("#auctionStatus").value,nextLot:Number($("#auctionFirstLot").value)||1,items:[]};state.auctions.push(a);state.selectedAuctionId=a.id;await saveState();$("#auctionDialog").close();e.target.reset();route="dashboard";render();showToast("Auction created")}
-function itemKind(){return document.querySelector('input[name="itemKind"]:checked')?.value||"estate"}
-function setItemKind(kind){const radio=document.querySelector(`input[name="itemKind"][value="${kind}"]`);if(radio)radio.checked=true;if(kind==="vehicle")$("#itemCategory").value="Vehicles";else if(kind==="farm")$("#itemCategory").value="Farm Equipment";else if(["Vehicles","Farm Equipment"].includes($("#itemCategory").value))$("#itemCategory").value="Household";$("#vehicleModeHint").classList.toggle("hidden",kind!=="vehicle");$("#farmModeHint").classList.toggle("hidden",kind!=="farm");$("#continueBtn").textContent=kind==="vehicle"?"Continue to vehicle & VIN":kind==="farm"?"Continue to farm equipment details":"Continue to item details";toggleVehicle()}
-function openItem(){const a=currentAuction();if(!a)return;draftPhotos=[];vinPhoto="";$("#itemForm").reset();$("#lotNumber").value=a.nextLot;$("#itemCategory").value=a.type==="Vehicle"?"Vehicles":a.type==="Farm"?"Farm Equipment":"Household";setItemKind(a.type==="Vehicle"?"vehicle":a.type==="Farm"?"farm":"estate");$("#photoError").classList.add("hidden");$("#vinPreview").classList.add("hidden");$("#vinMessage").textContent="Take a close VIN photo or enter the number manually. Successful scans automatically fill the fields below.";showPhotoStep();renderPhotoGrid();$("#itemDialog").showModal()}
-function showPhotoStep(){$("#photoStep").classList.remove("hidden");$("#detailsStep").classList.add("hidden");$("#backItemBtn").classList.add("hidden");$("#saveItemBtn").classList.add("hidden");$("#continueBtn").classList.remove("hidden");$("#itemStepLabel").textContent="Step 1 of 2 · Item type and photos";setItemKind(itemKind())}
-function showDetailsStep(){$("#photoStep").classList.add("hidden");$("#detailsStep").classList.remove("hidden");$("#backItemBtn").classList.remove("hidden");$("#saveItemBtn").classList.remove("hidden");$("#continueBtn").classList.add("hidden");$("#itemStepLabel").textContent="Step 2 of 2 · Review and save";toggleVehicle()}
-function renderPhotoGrid(){$("#photoGrid").innerHTML=draftPhotos.length?draftPhotos.map((p,n)=>`<div class="photo-tile"><img src="${p}" alt="Item photo ${n+1}"><button type="button" data-remove-photo="${n}" aria-label="Remove photo">×</button></div>`).join(""):`<div class="photo-placeholder"><div><strong>Photograph every useful angle</strong><br><span>Front, back, labels, damage, serial numbers, and VIN plates</span></div></div>`}
-async function addFiles(files){const remaining=8-draftPhotos.length;if(!remaining)return showToast("Eight photos is the limit for one item");for(const file of [...files].slice(0,remaining)){try{draftPhotos.push(await compressImage(file))}catch{showToast(`Could not read ${file.name}`)}}renderPhotoGrid();$("#cameraInput").value="";$("#libraryInput").value=""}
-async function compressImage(file){let bitmap;try{bitmap=await createImageBitmap(file)}catch{bitmap=await new Promise((resolve,reject)=>{const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject()};img.src=url})}const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height)),canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));canvas.getContext("2d").drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();return await new Promise((resolve,reject)=>canvas.toBlob(b=>{if(!b)return reject();const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(b)},"image/jpeg",.82))}
-function demoRecognition(engine){const kind=itemKind();if(kind==="vehicle")return{detectedName:"Vehicle photographed",title:"Vehicle — scan VIN or verify year, make and model",category:"Vehicles",condition:"Unknown",startingBid:500,description:"Vehicle photographed for auction. Scan or enter the VIN, then confirm mileage, title status, operating condition, and visible damage before publishing.",confidence:72};if(kind==="farm")return{detectedName:"Farm equipment photographed",title:"Farm equipment — verify make and model",category:"Farm Equipment",condition:"Good used condition",startingBid:250,description:"Farm equipment photographed for auction. Confirm manufacturer, model, serial number, hours, attachments, and operating condition before publishing.",confidence:74};return{detectedName:engine==="secondary"?"Estate item second review":"Estate item photographed",title:"Estate sale item — review listing title",category:"Household",condition:"Good used condition",startingBid:25,description:"Estate item photographed for auction. Confirm maker, material, dimensions, age, markings, completeness, and visible wear before publishing.",confidence:70}}
-function loadScript(src,id){return new Promise((resolve,reject)=>{if(window[id])return resolve();const existing=document.querySelector(`script[data-loader="${id}"]`);if(existing){existing.addEventListener("load",resolve,{once:true});existing.addEventListener("error",reject,{once:true});return}const s=document.createElement("script");s.src=src;s.dataset.loader=id;s.onload=resolve;s.onerror=()=>reject(new Error("Recognition model could not be downloaded."));document.head.appendChild(s)})}
-async function getVisionModel(){if(!visionModelPromise)visionModelPromise=(async()=>{await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js","tf");await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js","mobilenet");return mobilenet.load({version:2,alpha:.5})})().catch(e=>{visionModelPromise=null;throw e});return visionModelPromise}
-function titleCase(v){return v.replace(/\b\w/g,c=>c.toUpperCase())}
-function predictionCategory(label){const l=label.toLowerCase(),kind=itemKind();if(kind==="vehicle")return"Vehicles";if(kind==="farm")return"Farm Equipment";if(/cabinet|wardrobe|table|chair|sofa|couch|desk|bookcase|chest|lamp|refrigerator|washer|stove|microwave|television/.test(l))return"Household";if(/hammer|drill|saw|wrench|screwdriver|plane|vise|tool|chain saw/.test(l))return"Tools & Shop";if(/antique|vase|clock|silver|collectible/.test(l))return"Antiques";return"Miscellaneous"}
-async function recognizeOnDevice(){const model=await getVisionModel(),img=new Image();img.src=draftPhotos[0];if(img.decode)await img.decode();else await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject});const predictions=await model.classify(img,5);if(!predictions.length)throw new Error("No recognizable item was found in the photo.");const top=predictions[0],primary=top.className.split(",")[0].trim(),category=predictionCategory(top.className,currentAuction()?.type),alternates=predictions.slice(1,3).map(p=>p.className.split(",")[0].trim()).join(", ");return{detectedName:titleCase(primary),title:titleCase(primary),category,condition:"Unknown",startingBid:category==="Vehicles"?500:category==="Farm Equipment"?250:category==="Tools & Shop"?50:25,description:`Photo recognition suggests ${primary}${alternates?`; other possible matches are ${alternates}`:""}. Confirm the exact maker, model, dimensions, condition, markings, and completeness before publishing.`,confidence:Math.max(1,Math.round(top.probability*100))}}
-async function runAI(engine){if(!draftPhotos.length)return showPhotoError("Add at least one photo before using HammerList AI.");setBusy(true,"HammerList is reviewing the photos…");showPhotoError("");try{const a=currentAuction();let data=null,mode="server";try{const res=await fetch("./api/recognize",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({images:draftPhotos.slice(0,3),engine,auctionType:a.type})});if(res.ok)data=await res.json()}catch{}if(!data){mode="device";showToast("Starting on-device recognition — the first scan may take a moment");try{data=await recognizeOnDevice()}catch{mode="demo";data=demoRecognition(engine)}}applyAI(data);showDetailsStep();showToast(mode==="device"?"Photo recognized on this device — review the result":mode==="demo"?"Recognition unavailable — review the editable suggestion":engine==="secondary"?"Second opinion ready":"Listing suggestion ready")}catch(e){showPhotoError(e.message||"The scan could not be completed.")}finally{setBusy(false)}}
-function applyAI(d){const kind=itemKind(),category=kind==="vehicle"?"Vehicles":kind==="farm"?"Farm Equipment":["Vehicles","Farm Equipment"].includes(d.category)?"Miscellaneous":d.category||"Miscellaneous";$("#detectedName").textContent=d.detectedName||"Item recognized";$("#confidenceBadge").textContent=`${d.confidence||0}% confidence`;$("#itemTitle").value=d.title||"";$("#itemCategory").value=category;$("#itemCondition").value=d.condition||"Unknown";$("#startingBid").value=d.startingBid??"";$("#itemDescription").value=d.description||"";if(d.vin)$("#vinInput").value=d.vin;if(d.vehicleYear)$("#vehicleYear").value=d.vehicleYear;if(d.vehicleMake)$("#vehicleMake").value=d.vehicleMake;if(d.vehicleModel)$("#vehicleModel").value=d.vehicleModel;if(d.vehicleTrim)$("#vehicleTrim").value=d.vehicleTrim;if(d.bodyClass)$("#vehicleBody").value=d.bodyClass;toggleVehicle()}
-function showPhotoError(msg){const e=$("#photoError");e.textContent=msg;e.classList.toggle("hidden",!msg)}
-function toggleVehicle(){const show=itemKind()==="vehicle"||$("#itemCategory").value==="Vehicles";$("#vehicleFields").classList.toggle("hidden",!show)}
-function cleanVin(){return $("#vinInput").value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g,"").slice(0,17)}
-async function decodeVin(){const vin=cleanVin();$("#vinInput").value=vin;if(vin.length!==17){$("#vinMessage").textContent="Enter a complete 17-character VIN.";return}setBusy(true,"Looking up the VIN…");try{const res=await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}?format=json`),payload=await res.json(),v=payload.Results?.[0]||{};if(!res.ok||!payload.Results?.length)throw new Error("VIN lookup failed");if(v.ErrorCode&&String(v.ErrorCode).split(",").some(code=>code.trim()!=="0"))throw new Error(v.ErrorText||"The VIN could not be validated.");const d={year:v.ModelYear,make:v.Make,model:v.Model,trim:v.Trim,body:v.BodyClass,engine:[v.DisplacementL&&`${v.DisplacementL}L`,v.EngineCylinders&&`${v.EngineCylinders} cyl`,v.FuelTypePrimary].filter(Boolean).join(" "),drive:v.DriveType};$("#vehicleYear").value=d.year||"";$("#vehicleMake").value=d.make||"";$("#vehicleModel").value=d.model||"";$("#vehicleTrim").value=d.trim||"";$("#vehicleBody").value=d.body||"";$("#vehicleEngine").value=d.engine||"";$("#vehicleDrive").value=d.drive||"";$("#itemTitle").value=[d.year,d.make,d.model,d.trim].filter(Boolean).join(" ")||$("#itemTitle").value;$("#vinMessage").textContent="Vehicle details loaded from NHTSA. Confirm them against the vehicle before publishing.";showToast("VIN decoded and vehicle fields populated")}catch(e){$("#vinMessage").textContent=e.message||"VIN lookup failed"}finally{setBusy(false)}}
-function extractVin(text){const lines=String(text||"").toUpperCase().split(/\n+/);for(const line of lines){const normalized=line.replace(/[OQ]/g,"0").replace(/I/g,"1").replace(/[^A-HJ-NPR-Z0-9]/g,"");const match=normalized.match(/[A-HJ-NPR-Z0-9]{17}/);if(match)return match[0]}return""}
-async function readVinOnDevice(images=draftPhotos.slice(0,3)){await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js","Tesseract");const worker=await Tesseract.createWorker("eng");await worker.setParameters({tessedit_char_whitelist:"ABCDEFGHJKLMNPRSTUVWXYZ0123456789",tessedit_pageseg_mode:"6",preserve_interword_spaces:"0"});try{for(const photo of images){const result=await worker.recognize(photo),vin=extractVin(result.data?.text);if(vin)return vin}}finally{await worker.terminate()}return""}
-async function recognizeAndDecodeVin(images){setBusy(true,"Reading the VIN…");$("#vinMessage").textContent="Reading the 17-character VIN. The first scan may take a moment.";try{let vin="";try{const res=await fetch("./api/vin-scan",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({images:images.slice(0,3)})});if(res.ok)vin=(await res.json()).vin||""}catch{}if(!vin)vin=await readVinOnDevice(images);if(!vin)throw new Error("No complete VIN was visible. Move closer, hold the phone straight, and avoid glare.");$("#vinInput").value=vin;await decodeVin()}catch(e){$("#vinMessage").textContent=e.message||"VIN could not be read"}finally{setBusy(false)}}
-async function scanVin(){if(!draftPhotos.length){$("#vinMessage").textContent="Add a clear VIN plate photo or use Open camera & scan VIN.";return}await recognizeAndDecodeVin(draftPhotos)}
-async function scanVinCamera(files){const file=files?.[0];if(!file)return;try{vinPhoto=await compressImage(file);$("#vinPreviewImage").src=vinPhoto;$("#vinPreview").classList.remove("hidden");if(draftPhotos.length<8){draftPhotos.push(vinPhoto);renderPhotoGrid()}await recognizeAndDecodeVin([vinPhoto])}catch(e){$("#vinMessage").textContent=e.message||"The VIN photo could not be read."}finally{$("#vinCameraInput").value=""}}
-async function saveItem(e){e.preventDefault();if(!draftPhotos.length)return showToast("Add at least one photo");const a=currentAuction(),vehicle=itemKind()==="vehicle"||$("#itemCategory").value==="Vehicles",item={id:uid(),lot:Number($("#lotNumber").value),title:$("#itemTitle").value.trim(),category:vehicle?"Vehicles":$("#itemCategory").value,condition:$("#itemCondition").value,startingBid:Number($("#startingBid").value)||0,description:$("#itemDescription").value.trim(),confidence:Number($("#confidenceBadge").textContent.match(/\d+/)?.[0]||0),status:"Ready",photos:[...draftPhotos],createdAt:new Date().toISOString()};if(vehicle)Object.assign(item,{vin:cleanVin(),year:$("#vehicleYear").value,make:$("#vehicleMake").value,model:$("#vehicleModel").value,trim:$("#vehicleTrim").value,body:$("#vehicleBody").value,engine:$("#vehicleEngine").value,drive:$("#vehicleDrive").value,mileage:$("#vehicleMileage").value});a.items.push(item);a.nextLot=Math.max(a.nextLot,item.lot+1);await saveState();$("#itemDialog").close();render();showToast(`Lot ${item.lot} saved with ${item.photos.length} photo${item.photos.length===1?"":"s"}`)}
-function viewItem(id){const a=currentAuction(),i=a.items.find(x=>x.id===id);if(!i)return;const vehicle=i.category==="Vehicles";$("#itemViewContent").innerHTML=`<header class="dialog-head"><div><p class="eyebrow">Lot ${i.lot} · ${esc(i.category)}</p><h2>${esc(i.title)}</h2></div><button type="button" class="icon-btn" data-close="itemViewDialog">×</button></header><div class="item-view-gallery">${i.photos.map((p,n)=>`<img src="${p}" alt="${esc(i.title)} photo ${n+1}">`).join("")}</div><div class="item-view-details"><div class="detail-table"><div class="detail-cell"><small>Condition</small><strong>${esc(i.condition)}</strong></div><div class="detail-cell"><small>Starting bid</small><strong>${money(i.startingBid)}</strong></div><div class="detail-cell"><small>Status</small><strong>${esc(i.status)}</strong></div>${vehicle?`<div class="detail-cell"><small>VIN</small><strong>${esc(i.vin||"Not entered")}</strong></div><div class="detail-cell"><small>Vehicle</small><strong>${esc([i.year,i.make,i.model].filter(Boolean).join(" ")||"Not decoded")}</strong></div><div class="detail-cell"><small>Mileage</small><strong>${i.mileage?Number(i.mileage).toLocaleString():"Not entered"}</strong></div>`:""}</div><p>${esc(i.description)}</p><button class="btn secondary" data-delete-item="${i.id}">Delete demo item</button></div>`;$("#itemViewDialog").showModal()}
-async function deleteItem(id){if(!confirm("Delete this item from the demo catalog?"))return;const a=currentAuction();a.items=a.items.filter(i=>i.id!==id);await saveState();$("#itemViewDialog").close();render();showToast("Item deleted")}
+  // node_modules/@capacitor/filesystem/dist/esm/web.js
+  var web_exports = {};
+  __export(web_exports, {
+    FilesystemWeb: () => FilesystemWeb
+  });
+  function resolve(path) {
+    const posix = path.split("/").filter((item) => item !== ".");
+    const newPosix = [];
+    posix.forEach((item) => {
+      if (item === ".." && newPosix.length > 0 && newPosix[newPosix.length - 1] !== "..") {
+        newPosix.pop();
+      } else {
+        newPosix.push(item);
+      }
+    });
+    return newPosix.join("/");
+  }
+  function isPathParent(parent, children) {
+    parent = resolve(parent);
+    children = resolve(children);
+    const pathsA = parent.split("/");
+    const pathsB = children.split("/");
+    return parent !== children && pathsA.every((value, index) => value === pathsB[index]);
+  }
+  var FilesystemWeb;
+  var init_web = __esm({
+    "node_modules/@capacitor/filesystem/dist/esm/web.js"() {
+      init_dist();
+      init_definitions();
+      FilesystemWeb = class _FilesystemWeb extends WebPlugin {
+        constructor() {
+          super(...arguments);
+          this.DB_VERSION = 1;
+          this.DB_NAME = "Disc";
+          this._writeCmds = ["add", "put", "delete"];
+          this.downloadFile = async (options) => {
+            var _a, _b;
+            const requestInit = buildRequestInit(options, options.webFetchExtra);
+            const response = await fetch(options.url, requestInit);
+            let blob;
+            if (!options.progress)
+              blob = await response.blob();
+            else if (!(response === null || response === void 0 ? void 0 : response.body))
+              blob = new Blob();
+            else {
+              const reader = response.body.getReader();
+              let bytes = 0;
+              const chunks = [];
+              const contentType = response.headers.get("content-type");
+              const contentLength = parseInt(response.headers.get("content-length") || "0", 10);
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done)
+                  break;
+                chunks.push(value);
+                bytes += (value === null || value === void 0 ? void 0 : value.length) || 0;
+                const status = {
+                  url: options.url,
+                  bytes,
+                  contentLength
+                };
+                this.notifyListeners("progress", status);
+              }
+              const allChunks = new Uint8Array(bytes);
+              let position = 0;
+              for (const chunk of chunks) {
+                if (typeof chunk === "undefined")
+                  continue;
+                allChunks.set(chunk, position);
+                position += chunk.length;
+              }
+              blob = new Blob([allChunks.buffer], { type: contentType || void 0 });
+            }
+            const result = await this.writeFile({
+              path: options.path,
+              directory: (_a = options.directory) !== null && _a !== void 0 ? _a : void 0,
+              recursive: (_b = options.recursive) !== null && _b !== void 0 ? _b : false,
+              data: blob
+            });
+            return { path: result.uri, blob };
+          };
+        }
+        readFileInChunks(_options, _callback) {
+          throw this.unavailable("Method not implemented.");
+        }
+        async initDb() {
+          if (this._db !== void 0) {
+            return this._db;
+          }
+          if (!("indexedDB" in window)) {
+            throw this.unavailable("This browser doesn't support IndexedDB");
+          }
+          return new Promise((resolve2, reject) => {
+            const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
+            request.onupgradeneeded = _FilesystemWeb.doUpgrade;
+            request.onsuccess = () => {
+              this._db = request.result;
+              resolve2(request.result);
+            };
+            request.onerror = () => reject(request.error);
+            request.onblocked = () => {
+              console.warn("db blocked");
+            };
+          });
+        }
+        static doUpgrade(event) {
+          const eventTarget = event.target;
+          const db2 = eventTarget.result;
+          switch (event.oldVersion) {
+            case 0:
+            case 1:
+            default: {
+              if (db2.objectStoreNames.contains("FileStorage")) {
+                db2.deleteObjectStore("FileStorage");
+              }
+              const store = db2.createObjectStore("FileStorage", { keyPath: "path" });
+              store.createIndex("by_folder", "folder");
+            }
+          }
+        }
+        async dbRequest(cmd, args) {
+          const readFlag = this._writeCmds.indexOf(cmd) !== -1 ? "readwrite" : "readonly";
+          return this.initDb().then((conn) => {
+            return new Promise((resolve2, reject) => {
+              const tx = conn.transaction(["FileStorage"], readFlag);
+              const store = tx.objectStore("FileStorage");
+              const req = store[cmd](...args);
+              req.onsuccess = () => resolve2(req.result);
+              req.onerror = () => reject(req.error);
+            });
+          });
+        }
+        async dbIndexRequest(indexName, cmd, args) {
+          const readFlag = this._writeCmds.indexOf(cmd) !== -1 ? "readwrite" : "readonly";
+          return this.initDb().then((conn) => {
+            return new Promise((resolve2, reject) => {
+              const tx = conn.transaction(["FileStorage"], readFlag);
+              const store = tx.objectStore("FileStorage");
+              const index = store.index(indexName);
+              const req = index[cmd](...args);
+              req.onsuccess = () => resolve2(req.result);
+              req.onerror = () => reject(req.error);
+            });
+          });
+        }
+        getPath(directory, uriPath) {
+          const cleanedUriPath = uriPath !== void 0 ? uriPath.replace(/^[/]+|[/]+$/g, "") : "";
+          let fsPath = "";
+          if (directory !== void 0)
+            fsPath += "/" + directory;
+          if (uriPath !== "")
+            fsPath += "/" + cleanedUriPath;
+          return fsPath;
+        }
+        async clear() {
+          const conn = await this.initDb();
+          const tx = conn.transaction(["FileStorage"], "readwrite");
+          const store = tx.objectStore("FileStorage");
+          store.clear();
+        }
+        /**
+         * Read a file from disk
+         * @param options options for the file read
+         * @return a promise that resolves with the read file data result
+         */
+        async readFile(options) {
+          const path = this.getPath(options.directory, options.path);
+          const entry = await this.dbRequest("get", [path]);
+          if (entry === void 0)
+            throw Error("File does not exist.");
+          return { data: entry.content ? entry.content : "" };
+        }
+        /**
+         * Write a file to disk in the specified location on device
+         * @param options options for the file write
+         * @return a promise that resolves with the file write result
+         */
+        async writeFile(options) {
+          const path = this.getPath(options.directory, options.path);
+          let data = options.data;
+          const encoding = options.encoding;
+          const doRecursive = options.recursive;
+          const occupiedEntry = await this.dbRequest("get", [path]);
+          if (occupiedEntry && occupiedEntry.type === "directory")
+            throw Error("The supplied path is a directory.");
+          const parentPath = path.substr(0, path.lastIndexOf("/"));
+          const parentEntry = await this.dbRequest("get", [parentPath]);
+          if (parentEntry === void 0) {
+            const subDirIndex = parentPath.indexOf("/", 1);
+            if (subDirIndex !== -1) {
+              const parentArgPath = parentPath.substr(subDirIndex);
+              await this.mkdir({
+                path: parentArgPath,
+                directory: options.directory,
+                recursive: doRecursive
+              });
+            }
+          }
+          if (!encoding && !(data instanceof Blob)) {
+            data = data.indexOf(",") >= 0 ? data.split(",")[1] : data;
+            if (!this.isBase64String(data))
+              throw Error("The supplied data is not valid base64 content.");
+          }
+          const now = Date.now();
+          const pathObj = {
+            path,
+            folder: parentPath,
+            type: "file",
+            size: data instanceof Blob ? data.size : data.length,
+            ctime: now,
+            mtime: now,
+            content: data
+          };
+          await this.dbRequest("put", [pathObj]);
+          return {
+            uri: pathObj.path
+          };
+        }
+        /**
+         * Append to a file on disk in the specified location on device
+         * @param options options for the file append
+         * @return a promise that resolves with the file write result
+         */
+        async appendFile(options) {
+          const path = this.getPath(options.directory, options.path);
+          let data = options.data;
+          const encoding = options.encoding;
+          const parentPath = path.substr(0, path.lastIndexOf("/"));
+          const now = Date.now();
+          let ctime = now;
+          const occupiedEntry = await this.dbRequest("get", [path]);
+          if (occupiedEntry && occupiedEntry.type === "directory")
+            throw Error("The supplied path is a directory.");
+          const parentEntry = await this.dbRequest("get", [parentPath]);
+          if (parentEntry === void 0) {
+            const subDirIndex = parentPath.indexOf("/", 1);
+            if (subDirIndex !== -1) {
+              const parentArgPath = parentPath.substr(subDirIndex);
+              await this.mkdir({
+                path: parentArgPath,
+                directory: options.directory,
+                recursive: true
+              });
+            }
+          }
+          if (!encoding && !this.isBase64String(data))
+            throw Error("The supplied data is not valid base64 content.");
+          if (occupiedEntry !== void 0) {
+            if (occupiedEntry.content instanceof Blob) {
+              throw Error("The occupied entry contains a Blob object which cannot be appended to.");
+            }
+            if (occupiedEntry.content !== void 0 && !encoding) {
+              data = btoa(atob(occupiedEntry.content) + atob(data));
+            } else {
+              data = occupiedEntry.content + data;
+            }
+            ctime = occupiedEntry.ctime;
+          }
+          const pathObj = {
+            path,
+            folder: parentPath,
+            type: "file",
+            size: data.length,
+            ctime,
+            mtime: now,
+            content: data
+          };
+          await this.dbRequest("put", [pathObj]);
+        }
+        /**
+         * Delete a file from disk
+         * @param options options for the file delete
+         * @return a promise that resolves with the deleted file data result
+         */
+        async deleteFile(options) {
+          const path = this.getPath(options.directory, options.path);
+          const entry = await this.dbRequest("get", [path]);
+          if (entry === void 0)
+            throw Error("File does not exist.");
+          const entries = await this.dbIndexRequest("by_folder", "getAllKeys", [IDBKeyRange.only(path)]);
+          if (entries.length !== 0)
+            throw Error("Folder is not empty.");
+          await this.dbRequest("delete", [path]);
+        }
+        /**
+         * Create a directory.
+         * @param options options for the mkdir
+         * @return a promise that resolves with the mkdir result
+         */
+        async mkdir(options) {
+          const path = this.getPath(options.directory, options.path);
+          const doRecursive = options.recursive;
+          const parentPath = path.substr(0, path.lastIndexOf("/"));
+          const depth = (path.match(/\//g) || []).length;
+          const parentEntry = await this.dbRequest("get", [parentPath]);
+          const occupiedEntry = await this.dbRequest("get", [path]);
+          if (depth === 1)
+            throw Error("Cannot create Root directory");
+          if (occupiedEntry !== void 0)
+            throw Error("Current directory does already exist.");
+          if (!doRecursive && depth !== 2 && parentEntry === void 0)
+            throw Error("Parent directory must exist");
+          if (doRecursive && depth !== 2 && parentEntry === void 0) {
+            const parentArgPath = parentPath.substr(parentPath.indexOf("/", 1));
+            await this.mkdir({
+              path: parentArgPath,
+              directory: options.directory,
+              recursive: doRecursive
+            });
+          }
+          const now = Date.now();
+          const pathObj = {
+            path,
+            folder: parentPath,
+            type: "directory",
+            size: 0,
+            ctime: now,
+            mtime: now
+          };
+          await this.dbRequest("put", [pathObj]);
+        }
+        /**
+         * Remove a directory
+         * @param options the options for the directory remove
+         */
+        async rmdir(options) {
+          const { path, directory, recursive } = options;
+          const fullPath = this.getPath(directory, path);
+          const entry = await this.dbRequest("get", [fullPath]);
+          if (entry === void 0)
+            throw Error("Folder does not exist.");
+          if (entry.type !== "directory")
+            throw Error("Requested path is not a directory");
+          const readDirResult = await this.readdir({ path, directory });
+          if (readDirResult.files.length !== 0 && !recursive)
+            throw Error("Folder is not empty");
+          for (const entry2 of readDirResult.files) {
+            const entryPath = `${path}/${entry2.name}`;
+            const entryObj = await this.stat({ path: entryPath, directory });
+            if (entryObj.type === "file") {
+              await this.deleteFile({ path: entryPath, directory });
+            } else {
+              await this.rmdir({ path: entryPath, directory, recursive });
+            }
+          }
+          await this.dbRequest("delete", [fullPath]);
+        }
+        /**
+         * Return a list of files from the directory (not recursive)
+         * @param options the options for the readdir operation
+         * @return a promise that resolves with the readdir directory listing result
+         */
+        async readdir(options) {
+          const path = this.getPath(options.directory, options.path);
+          const entry = await this.dbRequest("get", [path]);
+          if (options.path !== "" && entry === void 0)
+            throw Error("Folder does not exist.");
+          const entries = await this.dbIndexRequest("by_folder", "getAllKeys", [IDBKeyRange.only(path)]);
+          const files = await Promise.all(entries.map(async (e) => {
+            let subEntry = await this.dbRequest("get", [e]);
+            if (subEntry === void 0) {
+              subEntry = await this.dbRequest("get", [e + "/"]);
+            }
+            return {
+              name: e.substring(path.length + 1),
+              type: subEntry.type,
+              size: subEntry.size,
+              ctime: subEntry.ctime,
+              mtime: subEntry.mtime,
+              uri: subEntry.path
+            };
+          }));
+          return { files };
+        }
+        /**
+         * Return full File URI for a path and directory
+         * @param options the options for the stat operation
+         * @return a promise that resolves with the file stat result
+         */
+        async getUri(options) {
+          const path = this.getPath(options.directory, options.path);
+          let entry = await this.dbRequest("get", [path]);
+          if (entry === void 0) {
+            entry = await this.dbRequest("get", [path + "/"]);
+          }
+          return {
+            uri: (entry === null || entry === void 0 ? void 0 : entry.path) || path
+          };
+        }
+        /**
+         * Return data about a file
+         * @param options the options for the stat operation
+         * @return a promise that resolves with the file stat result
+         */
+        async stat(options) {
+          const path = this.getPath(options.directory, options.path);
+          let entry = await this.dbRequest("get", [path]);
+          if (entry === void 0) {
+            entry = await this.dbRequest("get", [path + "/"]);
+          }
+          if (entry === void 0)
+            throw Error("Entry does not exist.");
+          return {
+            name: entry.path.substring(path.length + 1),
+            type: entry.type,
+            size: entry.size,
+            ctime: entry.ctime,
+            mtime: entry.mtime,
+            uri: entry.path
+          };
+        }
+        /**
+         * Rename a file or directory
+         * @param options the options for the rename operation
+         * @return a promise that resolves with the rename result
+         */
+        async rename(options) {
+          await this._copy(options, true);
+          return;
+        }
+        /**
+         * Copy a file or directory
+         * @param options the options for the copy operation
+         * @return a promise that resolves with the copy result
+         */
+        async copy(options) {
+          return this._copy(options, false);
+        }
+        async requestPermissions() {
+          return { publicStorage: "granted" };
+        }
+        async checkPermissions() {
+          return { publicStorage: "granted" };
+        }
+        /**
+         * Function that can perform a copy or a rename
+         * @param options the options for the rename operation
+         * @param doRename whether to perform a rename or copy operation
+         * @return a promise that resolves with the result
+         */
+        async _copy(options, doRename = false) {
+          let { toDirectory } = options;
+          const { to, from, directory: fromDirectory } = options;
+          if (!to || !from) {
+            throw Error("Both to and from must be provided");
+          }
+          if (!toDirectory) {
+            toDirectory = fromDirectory;
+          }
+          const fromPath = this.getPath(fromDirectory, from);
+          const toPath = this.getPath(toDirectory, to);
+          if (fromPath === toPath) {
+            return {
+              uri: toPath
+            };
+          }
+          if (isPathParent(fromPath, toPath)) {
+            throw Error("To path cannot contain the from path");
+          }
+          let toObj;
+          try {
+            toObj = await this.stat({
+              path: to,
+              directory: toDirectory
+            });
+          } catch (e) {
+            const toPathComponents = to.split("/");
+            toPathComponents.pop();
+            const toPath2 = toPathComponents.join("/");
+            if (toPathComponents.length > 0) {
+              const toParentDirectory = await this.stat({
+                path: toPath2,
+                directory: toDirectory
+              });
+              if (toParentDirectory.type !== "directory") {
+                throw new Error("Parent directory of the to path is a file");
+              }
+            }
+          }
+          if (toObj && toObj.type === "directory") {
+            throw new Error("Cannot overwrite a directory with a file");
+          }
+          const fromObj = await this.stat({
+            path: from,
+            directory: fromDirectory
+          });
+          const updateTime = async (path, ctime2, mtime) => {
+            const fullPath = this.getPath(toDirectory, path);
+            const entry = await this.dbRequest("get", [fullPath]);
+            entry.ctime = ctime2;
+            entry.mtime = mtime;
+            await this.dbRequest("put", [entry]);
+          };
+          const ctime = fromObj.ctime ? fromObj.ctime : Date.now();
+          switch (fromObj.type) {
+            // The "from" object is a file
+            case "file": {
+              const file = await this.readFile({
+                path: from,
+                directory: fromDirectory
+              });
+              if (doRename) {
+                await this.deleteFile({
+                  path: from,
+                  directory: fromDirectory
+                });
+              }
+              let encoding;
+              if (!(file.data instanceof Blob) && !this.isBase64String(file.data)) {
+                encoding = Encoding.UTF8;
+              }
+              const writeResult = await this.writeFile({
+                path: to,
+                directory: toDirectory,
+                data: file.data,
+                encoding
+              });
+              if (doRename) {
+                await updateTime(to, ctime, fromObj.mtime);
+              }
+              return writeResult;
+            }
+            case "directory": {
+              if (toObj) {
+                throw Error("Cannot move a directory over an existing object");
+              }
+              try {
+                await this.mkdir({
+                  path: to,
+                  directory: toDirectory,
+                  recursive: false
+                });
+                if (doRename) {
+                  await updateTime(to, ctime, fromObj.mtime);
+                }
+              } catch (e) {
+              }
+              const contents = (await this.readdir({
+                path: from,
+                directory: fromDirectory
+              })).files;
+              for (const filename of contents) {
+                await this._copy({
+                  from: `${from}/${filename.name}`,
+                  to: `${to}/${filename.name}`,
+                  directory: fromDirectory,
+                  toDirectory
+                }, doRename);
+              }
+              if (doRename) {
+                await this.rmdir({
+                  path: from,
+                  directory: fromDirectory
+                });
+              }
+            }
+          }
+          return {
+            uri: toPath
+          };
+        }
+        isBase64String(str) {
+          try {
+            return btoa(atob(str)) == str;
+          } catch (err) {
+            return false;
+          }
+        }
+      };
+      FilesystemWeb._debug = true;
+    }
+  });
 
-function csvCell(value){const text=String(value??"");return /[",\n]/.test(text)?`"${text.replace(/"/g,'""')}"`:text}
-function csv(rows){return "\ufeff"+rows.map(row=>row.map(csvCell).join(",")).join("\r\n")}
-function safeName(value){return String(value||"auction").trim().replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").toLowerCase()||"auction"}
-function photoNames(item){return (item.photos||[]).map((_,index)=>`${item.lot}-${index+1}.jpg`)}
-function exportIssues(auction){const issues=[];if(!auction.items.length)issues.push("Add at least one lot");auction.items.forEach(item=>{if(!item.title)issues.push(`Lot ${item.lot}: missing title`);if(!item.description)issues.push(`Lot ${item.lot}: missing description`);if(!item.photos?.length)issues.push(`Lot ${item.lot}: missing photo`);if(item.category==="Vehicles"&&!item.vin)issues.push(`Lot ${item.lot}: VIN not entered`)});return issues}
-function platformCatalog(platform,auction){const common=item=>({lot:item.lot,title:item.title,description:item.description,category:item.category,condition:item.condition,startingBid:item.startingBid,quantity:1,images:photoNames(item).join("|"),vin:item.vin||"",year:item.year||"",make:item.make||"",model:item.model||"",trim:item.trim||"",mileage:item.mileage||""});const values=auction.items.slice().sort((a,b)=>a.lot-b.lot).map(common);if(platform==="auctionflex")return[["Consignor Code","Inventory Number","Lot Number","Lead","Description","Quantity","Reserve","Low Estimate","High Estimate","Category","Condition","Starting Bid","Image Filenames","VIN","Year","Make","Model","Trim","Mileage"],...values.map(v=>["HOUSE",v.lot,v.lot,v.title,v.description,v.quantity,"","","",v.category,v.condition,v.startingBid,v.images,v.vin,v.year,v.make,v.model,v.trim,v.mileage])];if(platform==="proxibid")return[["Lot Number","Title","Description","Category","Quantity","Starting Bid","Reserve","Condition","Image Files","VIN","Year","Make","Model","Mileage"],...values.map(v=>[v.lot,v.title,v.description,v.category,v.quantity,v.startingBid,"",v.condition,v.images,v.vin,v.year,v.make,v.model,v.mileage])];if(platform==="ebay")return[["SKU","Title","Description","Condition","Quantity","Price","Category","Image Files","VIN","Year","Make","Model","Mileage"],...values.map(v=>[`LOT-${v.lot}`,v.title,v.description,v.condition,v.quantity,v.startingBid,v.category,v.images,v.vin,v.year,v.make,v.model,v.mileage])];return[["Lot Number","Title","Description","Category","Condition","Starting Bid","Quantity","Image Files","VIN","Year","Make","Model","Trim","Mileage"],...values.map(v=>[v.lot,v.title,v.description,v.category,v.condition,v.startingBid,v.quantity,v.images,v.vin,v.year,v.make,v.model,v.trim,v.mileage])]}
-function exportSettings(){return{destination:$("#exportPlatform").value,biddingType:$("#exportBiddingType").value,buyersPremiumPercent:Number($("#exportPremium").value)||0,lotStaggerSeconds:Number($("#exportStagger").value)||0,softCloseMinutes:Number($("#exportSoftClose").value)||0,pickupShipping:$("#exportPickup").value.trim(),terms:$("#exportTerms").value.trim()}}
-function renderExportSummary(){const a=currentAuction(),issues=exportIssues(a),items=a.items.length,photos=a.items.reduce((sum,item)=>sum+(item.photos?.length||0),0);$("#exportSummary").innerHTML=`<div class="export-counts"><div><strong>${items}</strong><span>lots</span></div><div><strong>${photos}</strong><span>photos</span></div><div><strong>${issues.length}</strong><span>checks</span></div></div>${issues.length?`<div class="export-warnings"><strong>Review before publishing</strong><ul>${issues.slice(0,6).map(issue=>`<li>${esc(issue)}</li>`).join("")}${issues.length>6?`<li>and ${issues.length-6} more</li>`:""}</ul></div>`:`<div class="export-ready">✓ Catalog has the core fields needed for export</div>`}`}
-function openExportDialog(){if(!currentAuction())return;renderExportSummary();$("#exportDialog").showModal()}
-async function downloadCatalogPackage(e){e.preventDefault();const auction=currentAuction();if(!auction?.items.length)return showToast("Add an item before exporting");setBusy(true,"Building catalog ZIP…");try{await loadScript("https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js","JSZip");const platform=$("#exportPlatform").value,zip=new JSZip(),manifest=[["Lot Number","Photo Number","Filename"]];zip.file("catalog.csv",csv(platformCatalog(platform,auction)));zip.file("auction-settings.json",JSON.stringify({auction:{name:auction.name,type:auction.type,date:auction.date,location:auction.location},publishing:exportSettings()},null,2));for(const item of auction.items){for(let index=0;index<(item.photos||[]).length;index++){const name=`${item.lot}-${index+1}.jpg`;manifest.push([item.lot,index+1,name]);try{const blob=await (await fetch(item.photos[index])).blob();zip.file(`photos/${name}`,blob)}catch{}}}zip.file("photo-manifest.csv",csv(manifest));zip.file("README.txt",`HammerList catalog export\n\nDestination: ${$("#exportPlatform").selectedOptions[0].textContent}\nAuction: ${auction.name}\n\nFor Auction Flex: import catalog.csv, map the spreadsheet columns, and import the photos folder using lot-number filenames. Review auction-level settings in auction-settings.json before uploading to HiBid.\n\nFor other platforms: use catalog.csv as the platform-ready working file and confirm the current vendor template or authorized API requirements before publishing.`);const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=`${safeName(auction.name)}-${platform}.zip`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);$("#exportDialog").close();showToast("Catalog ZIP downloaded")}catch(error){showToast(error.message||"The catalog package could not be created")}finally{setBusy(false)}}
+  // node_modules/@capacitor/share/dist/esm/web.js
+  var web_exports2 = {};
+  __export(web_exports2, {
+    ShareWeb: () => ShareWeb
+  });
+  var ShareWeb;
+  var init_web2 = __esm({
+    "node_modules/@capacitor/share/dist/esm/web.js"() {
+      init_dist();
+      ShareWeb = class extends WebPlugin {
+        async canShare() {
+          if (typeof navigator === "undefined" || !navigator.share) {
+            return { value: false };
+          } else {
+            return { value: true };
+          }
+        }
+        async share(options) {
+          if (typeof navigator === "undefined" || !navigator.share) {
+            throw this.unavailable("Share API not available in this browser");
+          }
+          await navigator.share({
+            title: options.title,
+            text: options.text,
+            url: options.url
+          });
+          return {};
+        }
+      };
+    }
+  });
 
-$("#loginForm").addEventListener("submit",async e=>{e.preventDefault();if($("#loginEmail").value.trim().toLowerCase()!=="auctioneer@hammerlist.app"||$("#loginPassword").value!=="demo123")return showToast("Use the demo credentials shown below the form");await Promise.race([stateReady,new Promise(resolve=>setTimeout(resolve,1200))]);if(!state)state=freshSeed();sessionStorage.setItem("hammerlist-session",$("#loginEmail").value.trim());startApp()});
-function startApp(){$("#loginView").classList.add("hidden");$("#appView").classList.remove("hidden");$("#signedInEmail").textContent=sessionStorage.getItem("hammerlist-session")||"auctioneer@hammerlist.app";render()}
-function logout(){sessionStorage.removeItem("hammerlist-session");$("#appView").classList.add("hidden");$("#loginView").classList.remove("hidden")}
-$("#logoutBtn").onclick=logout;$("#profileBtn").onclick=logout;$("#menuBtn").onclick=()=>$("#sidebar").classList.toggle("open");$("#auctionSelect").onchange=async e=>{state.selectedAuctionId=e.target.value;await saveState();render()};
-$$('.nav-item').forEach(b=>b.onclick=()=>{route=b.dataset.route;$("#sidebar").classList.remove("open");render()});
-document.addEventListener("click",async e=>{const action=e.target.closest("[data-action]")?.dataset.action;if(action==="new-auction")openAuctionDialog();if(action==="add-item")openItem();if(action==="export")openExportDialog();if(action==="auctions"){route="auctions";render()}const auctionId=e.target.closest("[data-select-auction]")?.dataset.selectAuction;if(auctionId){state.selectedAuctionId=auctionId;route="dashboard";await saveState();render()}const itemId=e.target.closest("[data-item]")?.dataset.item;if(itemId)viewItem(itemId);const remove=e.target.closest("[data-remove-photo]")?.dataset.removePhoto;if(remove!==undefined){draftPhotos.splice(Number(remove),1);renderPhotoGrid()}const del=e.target.closest("[data-delete-item]")?.dataset.deleteItem;if(del)deleteItem(del);const close=e.target.closest("[data-close]")?.dataset.close;if(close)$("#"+close).close()});
-$("#auctionForm").addEventListener("submit",createAuction);$("#cameraInput").onchange=e=>addFiles(e.target.files);$("#libraryInput").onchange=e=>addFiles(e.target.files);$("#vinCameraInput").onchange=e=>scanVinCamera(e.target.files);$("#scanBtn").onclick=()=>runAI("primary");$("#secondOpinionBtn").onclick=()=>runAI("secondary");$("#continueBtn").onclick=showDetailsStep;$("#backItemBtn").onclick=showPhotoStep;$("#closeItem").onclick=()=>$("#itemDialog").close();$$('input[name="itemKind"]').forEach(r=>r.onchange=()=>setItemKind(r.value));$("#itemCategory").onchange=()=>setItemKind($("#itemCategory").value==="Vehicles"?"vehicle":$("#itemCategory").value==="Farm Equipment"?"farm":"estate");$("#decodeVinBtn").onclick=decodeVin;$("#scanVinBtn").onclick=scanVin;$("#itemForm").addEventListener("submit",saveItem);$("#exportForm").addEventListener("submit",downloadCatalogPackage);$("#exportPlatform").onchange=renderExportSummary;$("#mobileAdd").onclick=openItem;
-const stateReady=loadState();stateReady.then(()=>{if(sessionStorage.getItem("hammerlist-session"))startApp()}).catch(()=>{state=freshSeed()});
+  // src/app.js
+  init_dist();
+
+  // node_modules/@capacitor/camera/dist/esm/index.js
+  init_dist();
+
+  // node_modules/@capacitor/camera/dist/esm/web.js
+  init_dist();
+
+  // node_modules/@capacitor/camera/dist/esm/definitions.js
+  var CameraSource;
+  (function(CameraSource2) {
+    CameraSource2["Prompt"] = "PROMPT";
+    CameraSource2["Camera"] = "CAMERA";
+    CameraSource2["Photos"] = "PHOTOS";
+  })(CameraSource || (CameraSource = {}));
+  var CameraDirection;
+  (function(CameraDirection2) {
+    CameraDirection2["Rear"] = "REAR";
+    CameraDirection2["Front"] = "FRONT";
+  })(CameraDirection || (CameraDirection = {}));
+  var CameraResultType;
+  (function(CameraResultType2) {
+    CameraResultType2["Uri"] = "uri";
+    CameraResultType2["Base64"] = "base64";
+    CameraResultType2["DataUrl"] = "dataUrl";
+  })(CameraResultType || (CameraResultType = {}));
+  var MediaType;
+  (function(MediaType2) {
+    MediaType2[MediaType2["Photo"] = 0] = "Photo";
+    MediaType2[MediaType2["Video"] = 1] = "Video";
+  })(MediaType || (MediaType = {}));
+  var MediaTypeSelection;
+  (function(MediaTypeSelection2) {
+    MediaTypeSelection2[MediaTypeSelection2["Photo"] = 0] = "Photo";
+    MediaTypeSelection2[MediaTypeSelection2["Video"] = 1] = "Video";
+    MediaTypeSelection2[MediaTypeSelection2["All"] = 2] = "All";
+  })(MediaTypeSelection || (MediaTypeSelection = {}));
+  var EncodingType;
+  (function(EncodingType2) {
+    EncodingType2[EncodingType2["JPEG"] = 0] = "JPEG";
+    EncodingType2[EncodingType2["PNG"] = 1] = "PNG";
+  })(EncodingType || (EncodingType = {}));
+  var CameraErrorCode;
+  (function(CameraErrorCode2) {
+    CameraErrorCode2["CameraPermissionDenied"] = "OS-PLUG-CAMR-0003";
+    CameraErrorCode2["GalleryPermissionDenied"] = "OS-PLUG-CAMR-0005";
+    CameraErrorCode2["NoCameraAvailable"] = "OS-PLUG-CAMR-0007";
+    CameraErrorCode2["TakePhotoCancelled"] = "OS-PLUG-CAMR-0006";
+    CameraErrorCode2["TakePhotoFailed"] = "OS-PLUG-CAMR-0010";
+    CameraErrorCode2["TakePhotoInvalidArguments"] = "OS-PLUG-CAMR-0014";
+    CameraErrorCode2["InvalidImageData"] = "OS-PLUG-CAMR-0008";
+    CameraErrorCode2["EditPhotoFailed"] = "OS-PLUG-CAMR-0009";
+    CameraErrorCode2["EditPhotoCancelled"] = "OS-PLUG-CAMR-0013";
+    CameraErrorCode2["EditPhotoEmptyUri"] = "OS-PLUG-CAMR-0024";
+    CameraErrorCode2["ImageNotFound"] = "OS-PLUG-CAMR-0011";
+    CameraErrorCode2["ProcessImageFailed"] = "OS-PLUG-CAMR-0012";
+    CameraErrorCode2["ChooseMediaFailed"] = "OS-PLUG-CAMR-0018";
+    CameraErrorCode2["ChooseMediaCancelled"] = "OS-PLUG-CAMR-0020";
+    CameraErrorCode2["MediaPathError"] = "OS-PLUG-CAMR-0021";
+    CameraErrorCode2["FetchImageFromUriFailed"] = "OS-PLUG-CAMR-0028";
+    CameraErrorCode2["RecordVideoFailed"] = "OS-PLUG-CAMR-0016";
+    CameraErrorCode2["RecordVideoCancelled"] = "OS-PLUG-CAMR-0017";
+    CameraErrorCode2["VideoNotFound"] = "OS-PLUG-CAMR-0025";
+    CameraErrorCode2["PlayVideoFailed"] = "OS-PLUG-CAMR-0023";
+    CameraErrorCode2["EncodeResultFailed"] = "OS-PLUG-CAMR-0019";
+    CameraErrorCode2["FileNotFound"] = "OS-PLUG-CAMR-0027";
+    CameraErrorCode2["InvalidArgument"] = "OS-PLUG-CAMR-0031";
+    CameraErrorCode2["GeneralError"] = "OS-PLUG-CAMR-0026";
+  })(CameraErrorCode || (CameraErrorCode = {}));
+
+  // node_modules/@capacitor/camera/dist/esm/web.js
+  var CameraWeb = class extends WebPlugin {
+    async takePhoto(options) {
+      return new Promise(async (resolve2, reject) => {
+        if (options.webUseInput) {
+          this.takePhotoCameraInputExperience(options, resolve2, reject);
+        } else {
+          this.takePhotoCameraExperience(options, resolve2, reject);
+        }
+      });
+    }
+    async recordVideo(_options) {
+      throw this.unimplemented("recordVideo is not implemented on Web.");
+    }
+    async playVideo(_options) {
+      throw this.unimplemented("playVideo is not implemented on Web.");
+    }
+    async chooseFromGallery(options) {
+      return new Promise(async (resolve2, reject) => {
+        this.galleryInputExperience(options, resolve2, reject);
+      });
+    }
+    async editPhoto(_options) {
+      throw this.unimplemented("editPhoto is not implemented on Web.");
+    }
+    async editURIPhoto(_options) {
+      throw this.unimplemented("editURIPhoto is not implemented on Web.");
+    }
+    async getPhoto(options) {
+      return new Promise(async (resolve2, reject) => {
+        if (options.webUseInput || options.source === CameraSource.Photos) {
+          this.fileInputExperience(options, resolve2, reject);
+        } else if (options.source === CameraSource.Prompt) {
+          let actionSheet = document.querySelector("pwa-action-sheet");
+          if (!actionSheet) {
+            actionSheet = document.createElement("pwa-action-sheet");
+            document.body.appendChild(actionSheet);
+          }
+          actionSheet.header = options.promptLabelHeader || "Photo";
+          actionSheet.cancelable = false;
+          actionSheet.options = [
+            { title: options.promptLabelPhoto || "From Photos" },
+            { title: options.promptLabelPicture || "Take Picture" }
+          ];
+          actionSheet.addEventListener("onSelection", async (e) => {
+            const selection = e.detail;
+            if (selection === 0) {
+              this.fileInputExperience(options, resolve2, reject);
+            } else {
+              this.cameraExperience(options, resolve2, reject);
+            }
+          });
+        } else {
+          this.cameraExperience(options, resolve2, reject);
+        }
+      });
+    }
+    async pickImages(_options) {
+      return new Promise(async (resolve2, reject) => {
+        this.multipleFileInputExperience(resolve2, reject);
+      });
+    }
+    async cameraExperience(options, resolve2, reject) {
+      await this._setupPWACameraModal(options.direction, (photo) => this._getCameraPhoto(photo, options), () => this.fileInputExperience(options, resolve2, reject), resolve2, reject);
+    }
+    fileInputExperience(options, resolve2, reject) {
+      let input = document.querySelector("#_capacitor-camera-input");
+      const cleanup = () => {
+        var _a;
+        (_a = input.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(input);
+      };
+      if (!input) {
+        input = document.createElement("input");
+        input.id = "_capacitor-camera-input";
+        input.type = "file";
+        input.hidden = true;
+        document.body.appendChild(input);
+        input.addEventListener("change", (_e) => {
+          const file = input.files[0];
+          let format = "jpeg";
+          if (file.type === "image/png") {
+            format = "png";
+          } else if (file.type === "image/gif") {
+            format = "gif";
+          }
+          if (options.resultType === "dataUrl" || options.resultType === "base64") {
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+              if (options.resultType === "dataUrl") {
+                resolve2({
+                  dataUrl: reader.result,
+                  format
+                });
+              } else if (options.resultType === "base64") {
+                const b64 = reader.result.split(",")[1];
+                resolve2({
+                  base64String: b64,
+                  format
+                });
+              }
+              cleanup();
+            });
+            reader.readAsDataURL(file);
+          } else {
+            resolve2({
+              webPath: URL.createObjectURL(file),
+              format
+            });
+            cleanup();
+          }
+        });
+        input.addEventListener("cancel", (_e) => {
+          reject(new CapacitorException("User cancelled photos app"));
+          cleanup();
+        });
+      }
+      input.accept = "image/*";
+      input.capture = true;
+      if (options.source === CameraSource.Photos || options.source === CameraSource.Prompt) {
+        input.removeAttribute("capture");
+      } else if (options.direction === CameraDirection.Front) {
+        input.capture = "user";
+      } else if (options.direction === CameraDirection.Rear) {
+        input.capture = "environment";
+      }
+      input.click();
+    }
+    multipleFileInputExperience(resolve2, reject) {
+      let input = document.querySelector("#_capacitor-camera-input-multiple");
+      const cleanup = () => {
+        var _a;
+        (_a = input.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(input);
+      };
+      if (!input) {
+        input = document.createElement("input");
+        input.id = "_capacitor-camera-input-multiple";
+        input.type = "file";
+        input.hidden = true;
+        input.multiple = true;
+        document.body.appendChild(input);
+        input.addEventListener("change", (_e) => {
+          const photos = [];
+          for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            let format = "jpeg";
+            if (file.type === "image/png") {
+              format = "png";
+            } else if (file.type === "image/gif") {
+              format = "gif";
+            }
+            photos.push({
+              webPath: URL.createObjectURL(file),
+              format
+            });
+          }
+          resolve2({ photos });
+          cleanup();
+        });
+        input.addEventListener("cancel", (_e) => {
+          reject(new CapacitorException("User cancelled photos app"));
+          cleanup();
+        });
+      }
+      input.accept = "image/*";
+      input.click();
+    }
+    _getCameraPhoto(photo, options) {
+      return new Promise((resolve2, reject) => {
+        const reader = new FileReader();
+        const format = this._getFileFormat(photo);
+        if (options.resultType === "uri") {
+          resolve2({
+            webPath: URL.createObjectURL(photo),
+            format,
+            saved: false
+          });
+        } else {
+          reader.readAsDataURL(photo);
+          reader.onloadend = () => {
+            const r = reader.result;
+            if (options.resultType === "dataUrl") {
+              resolve2({
+                dataUrl: r,
+                format,
+                saved: false
+              });
+            } else {
+              resolve2({
+                base64String: r.split(",")[1],
+                format,
+                saved: false
+              });
+            }
+          };
+          reader.onerror = (e) => {
+            reject(e);
+          };
+        }
+      });
+    }
+    async takePhotoCameraExperience(options, resolve2, reject) {
+      await this._setupPWACameraModal(options.cameraDirection, (photo) => {
+        var _a;
+        return this._buildPhotoMediaResult(photo, (_a = options.includeMetadata) !== null && _a !== void 0 ? _a : false);
+      }, () => this.takePhotoCameraInputExperience(options, resolve2, reject), resolve2, reject);
+    }
+    takePhotoCameraInputExperience(options, resolve2, reject) {
+      const input = this._createFileInput("_capacitor-camera-input-takephoto");
+      const cleanup = () => {
+        var _a;
+        (_a = input.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(input);
+      };
+      input.onchange = async (_e) => {
+        var _a;
+        if (!this._validateFileInput(input, reject, cleanup)) {
+          return;
+        }
+        const file = input.files[0];
+        resolve2(await this._buildPhotoMediaResult(file, (_a = options.includeMetadata) !== null && _a !== void 0 ? _a : false));
+        cleanup();
+      };
+      input.oncancel = () => {
+        reject(new CapacitorException("User cancelled photos app"));
+        cleanup();
+      };
+      input.accept = "image/*";
+      if (options.cameraDirection === CameraDirection.Front) {
+        input.capture = "user";
+      } else {
+        input.capture = "environment";
+      }
+      input.click();
+    }
+    galleryInputExperience(options, resolve2, reject) {
+      var _a, _b;
+      const input = this._createFileInput("_capacitor-camera-input-gallery");
+      input.multiple = (_a = options.allowMultipleSelection) !== null && _a !== void 0 ? _a : false;
+      const cleanup = () => {
+        var _a2;
+        (_a2 = input.parentNode) === null || _a2 === void 0 ? void 0 : _a2.removeChild(input);
+      };
+      input.onchange = async (_e) => {
+        var _a2;
+        if (!this._validateFileInput(input, reject, cleanup)) {
+          return;
+        }
+        const results = [];
+        for (let i = 0; i < input.files.length; i++) {
+          const file = input.files[i];
+          if (file.type.startsWith("image/")) {
+            results.push(await this._buildPhotoMediaResult(file, (_a2 = options.includeMetadata) !== null && _a2 !== void 0 ? _a2 : false));
+          } else if (file.type.startsWith("video/")) {
+            const format = this._getFileFormat(file);
+            let thumbnail;
+            let resolution;
+            let duration;
+            try {
+              const videoInfo = await this._getVideoMetadata(file);
+              thumbnail = videoInfo.thumbnail;
+              if (options.includeMetadata) {
+                resolution = videoInfo.resolution;
+                duration = videoInfo.duration;
+              }
+            } catch (e) {
+              console.warn("Failed to get video metadata:", e);
+            }
+            const result = {
+              type: MediaType.Video,
+              thumbnail,
+              webPath: URL.createObjectURL(file),
+              saved: false
+            };
+            if (options.includeMetadata) {
+              result.metadata = {
+                format,
+                resolution,
+                size: file.size,
+                creationDate: new Date(file.lastModified).toISOString(),
+                duration
+              };
+            }
+            results.push(result);
+          }
+        }
+        resolve2({ results });
+        cleanup();
+      };
+      input.oncancel = () => {
+        reject(new CapacitorException("User cancelled photos app"));
+        cleanup();
+      };
+      const mediaType = (_b = options.mediaType) !== null && _b !== void 0 ? _b : MediaTypeSelection.Photo;
+      if (mediaType === MediaTypeSelection.Photo) {
+        input.accept = "image/*";
+      } else if (mediaType === MediaTypeSelection.Video) {
+        input.accept = "video/*";
+      } else {
+        input.accept = "image/*,video/*";
+      }
+      input.click();
+    }
+    _getFileFormat(file) {
+      if (file.type === "image/png") {
+        return "png";
+      } else if (file.type === "image/gif") {
+        return "gif";
+      } else if (file.type.startsWith("video/")) {
+        return file.type.split("/")[1];
+      } else if (file.type.startsWith("image/")) {
+        return "jpeg";
+      }
+      return file.type.split("/")[1] || "jpeg";
+    }
+    async _buildPhotoMediaResult(file, includeMetadata) {
+      const format = this._getFileFormat(file);
+      const thumbnail = await this._getBase64FromFile(file);
+      const result = {
+        type: MediaType.Photo,
+        thumbnail,
+        webPath: URL.createObjectURL(file),
+        saved: false
+      };
+      if (includeMetadata) {
+        const resolution = await this._getImageResolution(file);
+        result.metadata = {
+          format,
+          resolution,
+          size: file.size,
+          creationDate: "lastModified" in file ? new Date(file.lastModified).toISOString() : (/* @__PURE__ */ new Date()).toISOString()
+        };
+      }
+      return result;
+    }
+    _validateFileInput(input, reject, cleanup) {
+      if (!input.files || input.files.length === 0) {
+        const message = input.multiple ? "No files selected" : "No file selected";
+        reject(new CapacitorException(message));
+        cleanup();
+        return false;
+      }
+      return true;
+    }
+    async _setupPWACameraModal(cameraDirection, onPhotoCallback, fallbackCallback, resolve2, reject) {
+      if (customElements.get("pwa-camera-modal")) {
+        const cameraModal = document.createElement("pwa-camera-modal");
+        cameraModal.facingMode = cameraDirection === CameraDirection.Front ? "user" : "environment";
+        document.body.appendChild(cameraModal);
+        try {
+          await cameraModal.componentOnReady();
+          cameraModal.addEventListener("onPhoto", async (e) => {
+            const photo = e.detail;
+            if (photo === null) {
+              reject(new CapacitorException("User cancelled photos app"));
+            } else if (photo instanceof Error) {
+              reject(photo);
+            } else {
+              resolve2(await onPhotoCallback(photo));
+            }
+            cameraModal.dismiss();
+            document.body.removeChild(cameraModal);
+          });
+          cameraModal.present();
+        } catch (e) {
+          fallbackCallback();
+        }
+      } else {
+        console.error(`Unable to load PWA Element 'pwa-camera-modal'. See the docs: https://capacitorjs.com/docs/web/pwa-elements.`);
+        fallbackCallback();
+      }
+    }
+    _createFileInput(id) {
+      let input = document.querySelector(`#${id}`);
+      if (!input) {
+        input = document.createElement("input");
+        input.id = id;
+        input.type = "file";
+        input.hidden = true;
+        document.body.appendChild(input);
+      }
+      return input;
+    }
+    async _getImageResolution(image) {
+      try {
+        const bitmap = await createImageBitmap(image);
+        const resolution = `${bitmap.width}x${bitmap.height}`;
+        bitmap.close();
+        return resolution;
+      } catch (e) {
+        console.warn("Failed to get image resolution:", e);
+        return void 0;
+      }
+    }
+    _getBase64FromFile(file) {
+      return new Promise((resolve2, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataUrl = reader.result;
+          const base64 = dataUrl.split(",")[1];
+          resolve2(base64);
+        };
+        reader.onerror = (e) => {
+          reject(e);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    _getVideoMetadata(videoFile) {
+      return new Promise((resolve2) => {
+        const video = document.createElement("video");
+        video.preload = "metadata";
+        video.muted = true;
+        video.onloadedmetadata = () => {
+          const seekTime = Math.min(1, video.duration * 0.1);
+          video.currentTime = seekTime;
+        };
+        video.onseeked = () => {
+          const result = {
+            resolution: `${video.videoWidth}x${video.videoHeight}`,
+            duration: video.duration
+          };
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              result.thumbnail = canvas.toDataURL("image/jpeg", 0.8).split(",")[1];
+            }
+          } catch (e) {
+            console.warn("Failed to generate video thumbnail:", e);
+          }
+          URL.revokeObjectURL(video.src);
+          resolve2(result);
+        };
+        video.onerror = () => {
+          URL.revokeObjectURL(video.src);
+          resolve2({});
+        };
+        video.src = URL.createObjectURL(videoFile);
+      });
+    }
+    async checkPermissions() {
+      if (typeof navigator === "undefined" || !navigator.permissions) {
+        throw this.unavailable("Permissions API not available in this browser");
+      }
+      try {
+        const permission = await window.navigator.permissions.query({
+          name: "camera"
+        });
+        return {
+          camera: permission.state,
+          photos: "granted"
+        };
+      } catch (_a) {
+        throw this.unavailable("Camera permissions are not available in this browser");
+      }
+    }
+    async requestPermissions() {
+      throw this.unimplemented("Not implemented on web.");
+    }
+    async pickLimitedLibraryPhotos() {
+      throw this.unavailable("Not implemented on web.");
+    }
+    async getLimitedLibraryPhotos() {
+      throw this.unavailable("Not implemented on web.");
+    }
+  };
+  var Camera = new CameraWeb();
+
+  // node_modules/@capacitor/camera/dist/esm/index.js
+  var Camera2 = registerPlugin("Camera", {
+    web: () => new CameraWeb()
+  });
+
+  // node_modules/@capacitor/filesystem/dist/esm/index.js
+  init_dist();
+
+  // node_modules/@capacitor/synapse/dist/synapse.mjs
+  function s(t) {
+    t.CapacitorUtils.Synapse = new Proxy(
+      {},
+      {
+        get(e, n) {
+          return new Proxy({}, {
+            get(w, o) {
+              return (c, p, r) => {
+                const i = t.Capacitor.Plugins[n];
+                if (i === void 0) {
+                  r(new Error(`Capacitor plugin ${n} not found`));
+                  return;
+                }
+                if (typeof i[o] != "function") {
+                  r(new Error(`Method ${o} not found in Capacitor plugin ${n}`));
+                  return;
+                }
+                (async () => {
+                  try {
+                    const a = await i[o](c);
+                    p(a);
+                  } catch (a) {
+                    r(a);
+                  }
+                })();
+              };
+            }
+          });
+        }
+      }
+    );
+  }
+  function u(t) {
+    t.CapacitorUtils.Synapse = new Proxy(
+      {},
+      {
+        get(e, n) {
+          return t.cordova.plugins[n];
+        }
+      }
+    );
+  }
+  function f(t = false) {
+    typeof window > "u" || (window.CapacitorUtils = window.CapacitorUtils || {}, window.Capacitor !== void 0 && !t ? s(window) : window.cordova !== void 0 && u(window));
+  }
+
+  // node_modules/@capacitor/filesystem/dist/esm/index.js
+  init_definitions();
+  var Filesystem = registerPlugin("Filesystem", {
+    web: () => Promise.resolve().then(() => (init_web(), web_exports)).then((m) => new m.FilesystemWeb())
+  });
+  f();
+
+  // node_modules/@capacitor/share/dist/esm/index.js
+  init_dist();
+  var Share = registerPlugin("Share", {
+    web: () => Promise.resolve().then(() => (init_web2(), web_exports2)).then((m) => new m.ShareWeb())
+  });
+
+  // src/app.js
+  var $ = (s2) => document.querySelector(s2);
+  var $$ = (s2) => [...document.querySelectorAll(s2)];
+  var esc = (v) => String(v ?? "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[c]);
+  var uid = () => typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  var seed = { selectedAuctionId: "auction-1", auctions: [{ id: "auction-1", name: "Johnson Farm & Estate Auction", type: "Mixed", date: "2026-10-10", location: "Lexington, Tennessee", status: "Cataloging", nextLot: 129, items: [
+    { id: "lot-126", lot: 126, title: "1937 John Deere AR Tractor", category: "Farm Equipment", condition: "Good used condition", startingBid: 2500, description: "Two-cylinder row-crop tractor. Verify serial number, operating condition, and restoration history before publishing.", confidence: 94, status: "Ready", photos: ["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9Ijc2MCIgdmlld0JveD0iMCAwIDEyMDAgNzYwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI3NjAiIGZpbGw9IiNkOGRmYzAiLz48Y2lyY2xlIGN4PSI5NzUiIGN5PSIxNDUiIHI9IjE5MCIgZmlsbD0iIzdjOTUyYiIgb3BhY2l0eT0iLjI1Ii8+PHBhdGggZD0iTTAgNjEwTDI4MCA0MzBsMjMwIDExNSAyMjUtMjEwIDQ2NSAzMDB2MTI1SDB6IiBmaWxsPSIjN2M5NTJiIiBvcGFjaXR5PSIuMzMiLz48cmVjdCB4PSI3MiIgeT0iNTEwIiB3aWR0aD0iNzAwIiBoZWlnaHQ9IjE1MCIgcng9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz48dGV4dCB4PSIxMTIiIHk9IjU3NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxMjNjMzEiPjE5MzcgSm9obiBEZWVyZSBBUjwvdGV4dD48dGV4dCB4PSIxMTIiIHk9IjYyNCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjciIGZpbGw9IiM1MzYzNWUiPkZhcm0gZXF1aXBtZW50IGNhdGFsb2cgZXhhbXBsZTwvdGV4dD48L3N2Zz4="], createdAt: "2026-09-18T10:00:00Z" },
+    { id: "lot-127", lot: 127, title: "Hand-carved French Oak Cabinet", category: "Antiques", condition: "Good used condition", startingBid: 325, description: "Tall carved oak display cabinet with glazed door and fitted shelves. Inspect hardware and finish for age-related wear.", confidence: 88, status: "Ready", photos: ["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9Ijc2MCIgdmlld0JveD0iMCAwIDEyMDAgNzYwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI3NjAiIGZpbGw9IiNlYWRiYzYiLz48Y2lyY2xlIGN4PSI5NzUiIGN5PSIxNDUiIHI9IjE5MCIgZmlsbD0iIzlhNjAzYyIgb3BhY2l0eT0iLjI1Ii8+PHBhdGggZD0iTTAgNjEwTDI4MCA0MzBsMjMwIDExNSAyMjUtMjEwIDQ2NSAzMDB2MTI1SDB6IiBmaWxsPSIjOWE2MDNjIiBvcGFjaXR5PSIuMzMiLz48cmVjdCB4PSI3MiIgeT0iNTEwIiB3aWR0aD0iNzAwIiBoZWlnaHQ9IjE1MCIgcng9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz48dGV4dCB4PSIxMTIiIHk9IjU3NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxMjNjMzEiPkZyZW5jaCBPYWsgQ2FiaW5ldDwvdGV4dD48dGV4dCB4PSIxMTIiIHk9IjYyNCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjciIGZpbGw9IiM1MzYzNWUiPkVzdGF0ZSBhbmQgYW50aXF1ZSBjYXRhbG9nIGV4YW1wbGU8L3RleHQ+PC9zdmc+"], createdAt: "2026-09-18T10:10:00Z" },
+    { id: "lot-128", lot: 128, title: "1972 Ford F-250 Pickup", category: "Vehicles", condition: "Fair", startingBid: 1800, description: "Vintage Ford pickup. Verify VIN, mileage, title status, engine, and running condition before publishing.", confidence: 91, status: "Ready", photos: ["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9Ijc2MCIgdmlld0JveD0iMCAwIDEyMDAgNzYwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI3NjAiIGZpbGw9IiNjYmQ5ZGYiLz48Y2lyY2xlIGN4PSI5NzUiIGN5PSIxNDUiIHI9IjE5MCIgZmlsbD0iIzQ0NzY4YyIgb3BhY2l0eT0iLjI1Ii8+PHBhdGggZD0iTTAgNjEwTDI4MCA0MzBsMjMwIDExNSAyMjUtMjEwIDQ2NSAzMDB2MTI1SDB6IiBmaWxsPSIjNDQ3NjhjIiBvcGFjaXR5PSIuMzMiLz48cmVjdCB4PSI3MiIgeT0iNTEwIiB3aWR0aD0iNzAwIiBoZWlnaHQ9IjE1MCIgcng9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOTIiLz48dGV4dCB4PSIxMTIiIHk9IjU3NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxMjNjMzEiPjE5NzIgRm9yZCBGLTI1MDwvdGV4dD48dGV4dCB4PSIxMTIiIHk9IjYyNCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjciIGZpbGw9IiM1MzYzNWUiPlZlaGljbGUgYXVjdGlvbiBjYXRhbG9nIGV4YW1wbGU8L3RleHQ+PC9zdmc+"], vin: "", year: "1972", make: "Ford", model: "F-250", trim: "", body: "Pickup", engine: "", drive: "", mileage: "", createdAt: "2026-09-18T10:20:00Z" }
+  ] }] };
+  var state = null;
+  var route = "dashboard";
+  var draftPhotos = [];
+  var vinPhoto = "";
+  var working = false;
+  var visionModelPromise = null;
+  var isNative = Capacitor.isNativePlatform();
+  var apiBase = String(globalThis.HAMMERLIST_API_BASE_URL || "").replace(/\/+$/, "");
+  var apiUrl = (path) => apiBase ? `${apiBase}${path}` : `.${path}`;
+  function nativeCancelled(error) {
+    return /cancel|user cancelled|user canceled/i.test(String(error?.message || error || ""));
+  }
+  async function nativePhotoFile(photo, prefix = "photo") {
+    if (!photo?.webPath) throw new Error("The selected photo could not be opened.");
+    const response = await fetch(photo.webPath), blob = await response.blob();
+    if (!response.ok) throw new Error("The selected photo could not be opened.");
+    return new File([blob], `${prefix}-${Date.now()}.${photo.format || "jpeg"}`, { type: blob.type || `image/${photo.format || "jpeg"}` });
+  }
+  async function takeNativeItemPhoto() {
+    if (working) return;
+    try {
+      const photo = await Camera2.getPhoto({ source: CameraSource.Camera, resultType: CameraResultType.Uri, quality: 88, width: 1800, correctOrientation: true, saveToGallery: false });
+      await addFiles([await nativePhotoFile(photo, "item")]);
+    } catch (error) {
+      if (!nativeCancelled(error)) showToast(error.message || "The camera could not be opened.");
+    }
+  }
+  async function chooseNativeItemPhotos() {
+    if (working) return;
+    const remaining = 8 - draftPhotos.length;
+    if (!remaining) return showToast("Eight photos is the limit for one item");
+    try {
+      const result = await Camera2.pickImages({ quality: 88, width: 1800, correctOrientation: true, limit: remaining });
+      const files = [];
+      for (const photo of result.photos || []) files.push(await nativePhotoFile(photo, "item"));
+      await addFiles(files);
+    } catch (error) {
+      if (!nativeCancelled(error)) showToast(error.message || "The photo library could not be opened.");
+    }
+  }
+  async function takeNativeVinPhoto() {
+    if (working) return;
+    try {
+      const photo = await Camera2.getPhoto({ source: CameraSource.Camera, resultType: CameraResultType.Uri, quality: 94, width: 2200, correctOrientation: true, saveToGallery: false });
+      await scanVinCamera([await nativePhotoFile(photo, "vin")]);
+    } catch (error) {
+      if (!nativeCancelled(error)) $("#vinMessage").textContent = error.message || "The camera could not be opened.";
+    }
+  }
+  function blobToBase64(blob) {
+    return new Promise((resolve2, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve2(String(reader.result).split(",")[1] || "");
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+  function db() {
+    return new Promise((resolve2, reject) => {
+      const r = indexedDB.open("hammerlist-demo", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("app");
+      r.onsuccess = () => resolve2(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+  var freshSeed = () => typeof structuredClone === "function" ? structuredClone(seed) : JSON.parse(JSON.stringify(seed));
+  async function loadState() {
+    try {
+      const d = await db();
+      state = await new Promise((resolve2, reject) => {
+        const t = d.transaction("app", "readonly").objectStore("app").get("state");
+        t.onsuccess = () => resolve2(t.result);
+        t.onerror = () => reject(t.error);
+      });
+      d.close();
+    } catch {
+    }
+    if (!state) state = freshSeed();
+  }
+  async function saveState() {
+    try {
+      const d = await db();
+      await new Promise((resolve2, reject) => {
+        const t = d.transaction("app", "readwrite").objectStore("app").put(state, "state");
+        t.onsuccess = resolve2;
+        t.onerror = () => reject(t.error);
+      });
+      d.close();
+    } catch (e) {
+      showToast("Could not save on this device. Check available storage.");
+    }
+  }
+  function currentAuction() {
+    return state.auctions.find((a) => a.id === state.selectedAuctionId) || null;
+  }
+  function showToast(msg) {
+    const t = $("#toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+  function fmtDate(v) {
+    if (!v) return "Date not set";
+    return (/* @__PURE__ */ new Date(`${v}T12:00:00`)).toLocaleDateString(void 0, { month: "short", day: "numeric", year: "numeric" });
+  }
+  function money(v) {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(v) || 0);
+  }
+  function setBusy(value, label = "Working\u2026") {
+    working = value;
+    [$("#scanBtn"), $("#secondOpinionBtn"), $("#scanVinBtn"), $("#decodeVinBtn"), $("#vinCameraInput")].filter(Boolean).forEach((b) => {
+      b.disabled = value;
+    });
+    if (value) showToast(label);
+  }
+  function render() {
+    const auction = currentAuction();
+    $("#auctionSelect").innerHTML = state.auctions.length ? state.auctions.map((a) => `<option value="${a.id}" ${a.id === state.selectedAuctionId ? "selected" : ""}>${esc(a.name)}</option>`).join("") : `<option>No auctions yet</option>`;
+    $$(".nav-item").forEach((b) => b.classList.toggle("active", b.dataset.route === route));
+    $("#mobileAdd").classList.toggle("hidden", !auction || route === "auctions");
+    if (route === "auctions") renderAuctions();
+    else if (!auction) renderNoAuction();
+    else renderWorkspace(auction, route === "inventory");
+  }
+  function renderNoAuction() {
+    $("#mainContent").innerHTML = `<section class="setup-card"><div><p class="eyebrow">Get started</p><h2>Create your first auction</h2><p>Name the sale, choose its type, and HammerList will prepare the right catalog fields.</p><button class="btn primary" data-action="new-auction">Create auction</button></div></section>`;
+  }
+  function workflow(a) {
+    const total = a.items.length;
+    const ready = a.items.filter((i) => i.status === "Ready").length;
+    return `<div class="workflow-strip"><div class="workflow-step active"><strong>1</strong><span>Auction created</span></div><div class="workflow-step ${total ? "active" : ""}"><strong>2</strong><span>Catalog items</span></div><div class="workflow-step ${ready && ready === total ? "active" : ""}"><strong>3</strong><span>Review lots</span></div><div class="workflow-step ${a.status === "Ready" ? "active" : ""}"><strong>4</strong><span>Publish ready</span></div></div>`;
+  }
+  function renderWorkspace(a, inventoryOnly = false) {
+    const items = a.items || [], ready = items.filter((i) => i.status === "Ready").length, categories = new Set(items.map((i) => i.category)).size;
+    $("#mainContent").innerHTML = `<header class="page-head"><div><p class="eyebrow">${esc(a.type)} auction</p><h1>${inventoryOnly ? "Inventory" : esc(a.name)}</h1><p class="muted">${inventoryOnly ? esc(a.name) : `${fmtDate(a.date)} \xB7 ${esc(a.location)}`}</p></div><div class="header-actions"><button class="btn secondary" data-action="auctions">Switch auction</button><button class="btn secondary" data-action="export">Export / publish</button><button class="btn primary" data-action="add-item">\uFF0B Add item</button></div></header>${inventoryOnly ? "" : workflow(a)}<div class="stats"><div class="stat"><small>Total lots</small><strong>${items.length}</strong></div><div class="stat"><small>Ready</small><strong>${ready}</strong></div><div class="stat"><small>Categories</small><strong>${categories}</strong></div><div class="stat"><small>Next lot</small><strong>#${a.nextLot}</strong></div></div><div class="content-grid"><section class="panel"><div class="panel-head"><h2>${inventoryOnly ? "All inventory" : "Recent inventory"}</h2><div class="filters"><input id="itemSearch" placeholder="Search lots"><select id="categoryFilter"><option value="">All categories</option>${["Farm Equipment", "Household", "Vehicles", "Tools & Shop", "Antiques", "Miscellaneous"].map((c) => `<option>${c}</option>`).join("")}</select></div></div><div id="inventoryGrid" class="inventory-grid"></div></section><aside class="panel side-panel"><h2>Auction activity</h2><div class="activity"><div class="activity-item"><span class="activity-icon">\u25A6</span><div><strong>${items.length} lots cataloged</strong><small>${ready} ready for review</small></div></div><div class="activity-item"><span class="activity-icon">\u25CE</span><div><strong>${esc(a.status)}</strong><small>Current auction status</small></div></div><div class="activity-item"><span class="activity-icon">#</span><div><strong>Lot ${a.nextLot} next</strong><small>Numbered automatically</small></div></div></div></aside></div>`;
+    renderItems(items);
+    $("#itemSearch").addEventListener("input", filterItems);
+    $("#categoryFilter").addEventListener("change", filterItems);
+  }
+  function renderItems(items) {
+    const grid = $("#inventoryGrid");
+    if (!items.length) {
+      grid.innerHTML = `<div class="empty-state"><strong>No items yet</strong>Take photos of the first item to begin this catalog.</div>`;
+      return;
+    }
+    grid.innerHTML = items.slice().sort((a, b) => b.lot - a.lot).map((i) => `<article class="lot-card" data-item="${i.id}" tabindex="0"><div class="lot-image"><img src="${i.photos?.[0] || ""}" alt=""><span class="photo-count">\u25A7 ${i.photos?.length || 0}</span></div><div class="lot-body"><div class="lot-meta"><span>Lot ${i.lot}</span><span>${esc(i.category)}</span></div><h3>${esc(i.title)}</h3><footer class="lot-foot"><span class="badge">${esc(i.status || "Draft")}</span><span class="price">${money(i.startingBid)}</span></footer></div></article>`).join("");
+  }
+  function filterItems() {
+    const a = currentAuction(), q = $("#itemSearch").value.toLowerCase(), c = $("#categoryFilter").value;
+    renderItems(a.items.filter((i) => (!c || i.category === c) && (!q || `${i.title} ${i.lot} ${i.category}`.toLowerCase().includes(q))));
+  }
+  function renderAuctions() {
+    $("#mainContent").innerHTML = `<header class="page-head"><div><p class="eyebrow">Auction management</p><h1>Your auctions</h1><p class="muted">Create a sale or reopen a catalog already in progress.</p></div><button class="btn primary" data-action="new-auction">\uFF0B New auction</button></header><div class="auction-grid">${state.auctions.map((a) => `<article class="auction-card ${a.id === state.selectedAuctionId ? "current" : ""}"><span class="auction-type">${esc(a.type)}</span><h3>${esc(a.name)}</h3><p class="muted">${fmtDate(a.date)} \xB7 ${esc(a.location || "Location not set")}</p><div class="lot-meta"><span>${a.items.length} lots</span><span>${esc(a.status)}</span></div><footer><button class="btn ${a.id === state.selectedAuctionId ? "secondary" : "dark"}" data-select-auction="${a.id}">${a.id === state.selectedAuctionId ? "Current" : "Open auction"}</button></footer></article>`).join("")}<button class="setup-card" data-action="new-auction"><div><strong>\uFF0B</strong><h2>Create another auction</h2><p>Estate sale, farm, vehicle, or mixed inventory.</p></div></button></div>`;
+  }
+  function openAuctionDialog() {
+    const d = new Date(Date.now() + 14 * 864e5);
+    $("#auctionDate").value = d.toISOString().slice(0, 10);
+    $("#auctionDialog").showModal();
+  }
+  async function createAuction(e) {
+    e.preventDefault();
+    const a = { id: uid(), name: $("#auctionName").value.trim(), type: $("#auctionType").value, date: $("#auctionDate").value, location: $("#auctionLocation").value.trim(), status: $("#auctionStatus").value, nextLot: Number($("#auctionFirstLot").value) || 1, items: [] };
+    state.auctions.push(a);
+    state.selectedAuctionId = a.id;
+    await saveState();
+    $("#auctionDialog").close();
+    e.target.reset();
+    route = "dashboard";
+    render();
+    showToast("Auction created");
+  }
+  function itemKind() {
+    return document.querySelector('input[name="itemKind"]:checked')?.value || "estate";
+  }
+  function setItemKind(kind) {
+    const radio = document.querySelector(`input[name="itemKind"][value="${kind}"]`);
+    if (radio) radio.checked = true;
+    if (kind === "vehicle") $("#itemCategory").value = "Vehicles";
+    else if (kind === "farm") $("#itemCategory").value = "Farm Equipment";
+    else if (["Vehicles", "Farm Equipment"].includes($("#itemCategory").value)) $("#itemCategory").value = "Household";
+    $("#vehicleModeHint").classList.toggle("hidden", kind !== "vehicle");
+    $("#farmModeHint").classList.toggle("hidden", kind !== "farm");
+    $("#continueBtn").textContent = kind === "vehicle" ? "Continue to vehicle & VIN" : kind === "farm" ? "Continue to farm equipment details" : "Continue to item details";
+    toggleVehicle();
+  }
+  function openItem() {
+    const a = currentAuction();
+    if (!a) return;
+    draftPhotos = [];
+    vinPhoto = "";
+    $("#itemForm").reset();
+    $("#lotNumber").value = a.nextLot;
+    $("#itemCategory").value = a.type === "Vehicle" ? "Vehicles" : a.type === "Farm" ? "Farm Equipment" : "Household";
+    setItemKind(a.type === "Vehicle" ? "vehicle" : a.type === "Farm" ? "farm" : "estate");
+    $("#photoError").classList.add("hidden");
+    $("#vinPreview").classList.add("hidden");
+    $("#vinMessage").textContent = "Take a close VIN photo or enter the number manually. Successful scans automatically fill the fields below.";
+    showPhotoStep();
+    renderPhotoGrid();
+    $("#itemDialog").showModal();
+  }
+  function showPhotoStep() {
+    $("#photoStep").classList.remove("hidden");
+    $("#detailsStep").classList.add("hidden");
+    $("#backItemBtn").classList.add("hidden");
+    $("#saveItemBtn").classList.add("hidden");
+    $("#continueBtn").classList.remove("hidden");
+    $("#itemStepLabel").textContent = "Step 1 of 2 \xB7 Item type and photos";
+    setItemKind(itemKind());
+  }
+  function showDetailsStep() {
+    $("#photoStep").classList.add("hidden");
+    $("#detailsStep").classList.remove("hidden");
+    $("#backItemBtn").classList.remove("hidden");
+    $("#saveItemBtn").classList.remove("hidden");
+    $("#continueBtn").classList.add("hidden");
+    $("#itemStepLabel").textContent = "Step 2 of 2 \xB7 Review and save";
+    toggleVehicle();
+  }
+  function renderPhotoGrid() {
+    $("#photoGrid").innerHTML = draftPhotos.length ? draftPhotos.map((p, n) => `<div class="photo-tile"><img src="${p}" alt="Item photo ${n + 1}"><button type="button" data-remove-photo="${n}" aria-label="Remove photo">\xD7</button></div>`).join("") : `<div class="photo-placeholder"><div><strong>Photograph every useful angle</strong><br><span>Front, back, labels, damage, serial numbers, and VIN plates</span></div></div>`;
+  }
+  async function addFiles(files) {
+    const remaining = 8 - draftPhotos.length;
+    if (!remaining) return showToast("Eight photos is the limit for one item");
+    for (const file of [...files].slice(0, remaining)) {
+      try {
+        draftPhotos.push(await compressImage(file));
+      } catch {
+        showToast(`Could not read ${file.name}`);
+      }
+    }
+    renderPhotoGrid();
+    $("#cameraInput").value = "";
+    $("#libraryInput").value = "";
+  }
+  async function compressImage(file) {
+    let bitmap;
+    try {
+      bitmap = await createImageBitmap(file);
+    } catch {
+      bitmap = await new Promise((resolve2, reject) => {
+        const img = new Image(), url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve2(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject();
+        };
+        img.src = url;
+      });
+    }
+    const scale = Math.min(1, 1400 / Math.max(bitmap.width, bitmap.height)), canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    return await new Promise((resolve2, reject) => canvas.toBlob((b) => {
+      if (!b) return reject();
+      const r = new FileReader();
+      r.onload = () => resolve2(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(b);
+    }, "image/jpeg", 0.82));
+  }
+  function demoRecognition(engine) {
+    const kind = itemKind();
+    if (kind === "vehicle") return { detectedName: "Vehicle photographed", title: "Vehicle \u2014 scan VIN or verify year, make and model", category: "Vehicles", condition: "Unknown", startingBid: 500, description: "Vehicle photographed for auction. Scan or enter the VIN, then confirm mileage, title status, operating condition, and visible damage before publishing.", confidence: 72 };
+    if (kind === "farm") return { detectedName: "Farm equipment photographed", title: "Farm equipment \u2014 verify make and model", category: "Farm Equipment", condition: "Good used condition", startingBid: 250, description: "Farm equipment photographed for auction. Confirm manufacturer, model, serial number, hours, attachments, and operating condition before publishing.", confidence: 74 };
+    return { detectedName: engine === "secondary" ? "Estate item second review" : "Estate item photographed", title: "Estate sale item \u2014 review listing title", category: "Household", condition: "Good used condition", startingBid: 25, description: "Estate item photographed for auction. Confirm maker, material, dimensions, age, markings, completeness, and visible wear before publishing.", confidence: 70 };
+  }
+  function loadScript(src, id) {
+    return new Promise((resolve2, reject) => {
+      if (window[id]) return resolve2();
+      const existing = document.querySelector(`script[data-loader="${id}"]`);
+      if (existing) {
+        existing.addEventListener("load", resolve2, { once: true });
+        existing.addEventListener("error", reject, { once: true });
+        return;
+      }
+      const s2 = document.createElement("script");
+      s2.src = src;
+      s2.dataset.loader = id;
+      s2.onload = resolve2;
+      s2.onerror = () => reject(new Error("Recognition model could not be downloaded."));
+      document.head.appendChild(s2);
+    });
+  }
+  async function getVisionModel() {
+    if (!visionModelPromise) visionModelPromise = (async () => {
+      await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js", "tf");
+      await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js", "mobilenet");
+      return mobilenet.load({ version: 2, alpha: 0.5 });
+    })().catch((e) => {
+      visionModelPromise = null;
+      throw e;
+    });
+    return visionModelPromise;
+  }
+  function titleCase(v) {
+    return v.replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  function predictionCategory(label) {
+    const l = label.toLowerCase(), kind = itemKind();
+    if (kind === "vehicle") return "Vehicles";
+    if (kind === "farm") return "Farm Equipment";
+    if (/cabinet|wardrobe|table|chair|sofa|couch|desk|bookcase|chest|lamp|refrigerator|washer|stove|microwave|television/.test(l)) return "Household";
+    if (/hammer|drill|saw|wrench|screwdriver|plane|vise|tool|chain saw/.test(l)) return "Tools & Shop";
+    if (/antique|vase|clock|silver|collectible/.test(l)) return "Antiques";
+    return "Miscellaneous";
+  }
+  async function recognizeOnDevice() {
+    const model = await getVisionModel(), img = new Image();
+    img.src = draftPhotos[0];
+    if (img.decode) await img.decode();
+    else await new Promise((resolve2, reject) => {
+      img.onload = resolve2;
+      img.onerror = reject;
+    });
+    const predictions = await model.classify(img, 5);
+    if (!predictions.length) throw new Error("No recognizable item was found in the photo.");
+    const top = predictions[0], primary = top.className.split(",")[0].trim(), category = predictionCategory(top.className, currentAuction()?.type), alternates = predictions.slice(1, 3).map((p) => p.className.split(",")[0].trim()).join(", ");
+    return { detectedName: titleCase(primary), title: titleCase(primary), category, condition: "Unknown", startingBid: category === "Vehicles" ? 500 : category === "Farm Equipment" ? 250 : category === "Tools & Shop" ? 50 : 25, description: `Photo recognition suggests ${primary}${alternates ? `; other possible matches are ${alternates}` : ""}. Confirm the exact maker, model, dimensions, condition, markings, and completeness before publishing.`, confidence: Math.max(1, Math.round(top.probability * 100)) };
+  }
+  async function runAI(engine) {
+    if (!draftPhotos.length) return showPhotoError("Add at least one photo before using HammerList AI.");
+    setBusy(true, "HammerList is reviewing the photos\u2026");
+    showPhotoError("");
+    try {
+      const a = currentAuction();
+      let data = null, mode = "server";
+      try {
+        const res = await fetch(apiUrl("/api/recognize"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ images: draftPhotos.slice(0, 3), engine, auctionType: a.type }) });
+        if (res.ok) data = await res.json();
+      } catch {
+      }
+      if (!data) {
+        mode = "device";
+        showToast("Starting on-device recognition \u2014 the first scan may take a moment");
+        try {
+          data = await recognizeOnDevice();
+        } catch {
+          mode = "demo";
+          data = demoRecognition(engine);
+        }
+      }
+      applyAI(data);
+      showDetailsStep();
+      showToast(mode === "device" ? "Photo recognized on this device \u2014 review the result" : mode === "demo" ? "Recognition unavailable \u2014 review the editable suggestion" : engine === "secondary" ? "Second opinion ready" : "Listing suggestion ready");
+    } catch (e) {
+      showPhotoError(e.message || "The scan could not be completed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  function applyAI(d) {
+    const kind = itemKind(), category = kind === "vehicle" ? "Vehicles" : kind === "farm" ? "Farm Equipment" : ["Vehicles", "Farm Equipment"].includes(d.category) ? "Miscellaneous" : d.category || "Miscellaneous";
+    $("#detectedName").textContent = d.detectedName || "Item recognized";
+    $("#confidenceBadge").textContent = `${d.confidence || 0}% confidence`;
+    $("#itemTitle").value = d.title || "";
+    $("#itemCategory").value = category;
+    $("#itemCondition").value = d.condition || "Unknown";
+    $("#startingBid").value = d.startingBid ?? "";
+    $("#itemDescription").value = d.description || "";
+    if (d.vin) $("#vinInput").value = d.vin;
+    if (d.vehicleYear) $("#vehicleYear").value = d.vehicleYear;
+    if (d.vehicleMake) $("#vehicleMake").value = d.vehicleMake;
+    if (d.vehicleModel) $("#vehicleModel").value = d.vehicleModel;
+    if (d.vehicleTrim) $("#vehicleTrim").value = d.vehicleTrim;
+    if (d.bodyClass) $("#vehicleBody").value = d.bodyClass;
+    toggleVehicle();
+  }
+  function showPhotoError(msg) {
+    const e = $("#photoError");
+    e.textContent = msg;
+    e.classList.toggle("hidden", !msg);
+  }
+  function toggleVehicle() {
+    const show = itemKind() === "vehicle" || $("#itemCategory").value === "Vehicles";
+    $("#vehicleFields").classList.toggle("hidden", !show);
+  }
+  function cleanVin() {
+    return $("#vinInput").value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, "").slice(0, 17);
+  }
+  async function decodeVin() {
+    const vin = cleanVin();
+    $("#vinInput").value = vin;
+    if (vin.length !== 17) {
+      $("#vinMessage").textContent = "Enter a complete 17-character VIN.";
+      return;
+    }
+    setBusy(true, "Looking up the VIN\u2026");
+    try {
+      const res = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/${encodeURIComponent(vin)}?format=json`), payload = await res.json(), v = payload.Results?.[0] || {};
+      if (!res.ok || !payload.Results?.length) throw new Error("VIN lookup failed");
+      if (v.ErrorCode && String(v.ErrorCode).split(",").some((code) => code.trim() !== "0")) throw new Error(v.ErrorText || "The VIN could not be validated.");
+      const d = { year: v.ModelYear, make: v.Make, model: v.Model, trim: v.Trim, body: v.BodyClass, engine: [v.DisplacementL && `${v.DisplacementL}L`, v.EngineCylinders && `${v.EngineCylinders} cyl`, v.FuelTypePrimary].filter(Boolean).join(" "), drive: v.DriveType };
+      $("#vehicleYear").value = d.year || "";
+      $("#vehicleMake").value = d.make || "";
+      $("#vehicleModel").value = d.model || "";
+      $("#vehicleTrim").value = d.trim || "";
+      $("#vehicleBody").value = d.body || "";
+      $("#vehicleEngine").value = d.engine || "";
+      $("#vehicleDrive").value = d.drive || "";
+      $("#itemTitle").value = [d.year, d.make, d.model, d.trim].filter(Boolean).join(" ") || $("#itemTitle").value;
+      $("#vinMessage").textContent = "Vehicle details loaded from NHTSA. Confirm them against the vehicle before publishing.";
+      showToast("VIN decoded and vehicle fields populated");
+    } catch (e) {
+      $("#vinMessage").textContent = e.message || "VIN lookup failed";
+    } finally {
+      setBusy(false);
+    }
+  }
+  function extractVin(text) {
+    const lines = String(text || "").toUpperCase().split(/\n+/);
+    for (const line of lines) {
+      const normalized = line.replace(/[OQ]/g, "0").replace(/I/g, "1").replace(/[^A-HJ-NPR-Z0-9]/g, "");
+      const match = normalized.match(/[A-HJ-NPR-Z0-9]{17}/);
+      if (match) return match[0];
+    }
+    return "";
+  }
+  async function readVinOnDevice(images = draftPhotos.slice(0, 3)) {
+    await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js", "Tesseract");
+    const worker = await Tesseract.createWorker("eng");
+    await worker.setParameters({ tessedit_char_whitelist: "ABCDEFGHJKLMNPRSTUVWXYZ0123456789", tessedit_pageseg_mode: "6", preserve_interword_spaces: "0" });
+    try {
+      for (const photo of images) {
+        const result = await worker.recognize(photo), vin = extractVin(result.data?.text);
+        if (vin) return vin;
+      }
+    } finally {
+      await worker.terminate();
+    }
+    return "";
+  }
+  async function recognizeAndDecodeVin(images) {
+    setBusy(true, "Reading the VIN\u2026");
+    $("#vinMessage").textContent = "Reading the 17-character VIN. The first scan may take a moment.";
+    try {
+      let vin = "";
+      try {
+        const res = await fetch(apiUrl("/api/vin-scan"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ images: images.slice(0, 3) }) });
+        if (res.ok) vin = (await res.json()).vin || "";
+      } catch {
+      }
+      if (!vin) vin = await readVinOnDevice(images);
+      if (!vin) throw new Error("No complete VIN was visible. Move closer, hold the phone straight, and avoid glare.");
+      $("#vinInput").value = vin;
+      await decodeVin();
+    } catch (e) {
+      $("#vinMessage").textContent = e.message || "VIN could not be read";
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function scanVin() {
+    if (!draftPhotos.length) {
+      $("#vinMessage").textContent = "Add a clear VIN plate photo or use Open camera & scan VIN.";
+      return;
+    }
+    await recognizeAndDecodeVin(draftPhotos);
+  }
+  async function scanVinCamera(files) {
+    const file = files?.[0];
+    if (!file) return;
+    try {
+      vinPhoto = await compressImage(file);
+      $("#vinPreviewImage").src = vinPhoto;
+      $("#vinPreview").classList.remove("hidden");
+      if (draftPhotos.length < 8) {
+        draftPhotos.push(vinPhoto);
+        renderPhotoGrid();
+      }
+      await recognizeAndDecodeVin([vinPhoto]);
+    } catch (e) {
+      $("#vinMessage").textContent = e.message || "The VIN photo could not be read.";
+    } finally {
+      $("#vinCameraInput").value = "";
+    }
+  }
+  async function saveItem(e) {
+    e.preventDefault();
+    if (!draftPhotos.length) return showToast("Add at least one photo");
+    const a = currentAuction(), vehicle = itemKind() === "vehicle" || $("#itemCategory").value === "Vehicles", item = { id: uid(), lot: Number($("#lotNumber").value), title: $("#itemTitle").value.trim(), category: vehicle ? "Vehicles" : $("#itemCategory").value, condition: $("#itemCondition").value, startingBid: Number($("#startingBid").value) || 0, description: $("#itemDescription").value.trim(), confidence: Number($("#confidenceBadge").textContent.match(/\d+/)?.[0] || 0), status: "Ready", photos: [...draftPhotos], createdAt: (/* @__PURE__ */ new Date()).toISOString() };
+    if (vehicle) Object.assign(item, { vin: cleanVin(), year: $("#vehicleYear").value, make: $("#vehicleMake").value, model: $("#vehicleModel").value, trim: $("#vehicleTrim").value, body: $("#vehicleBody").value, engine: $("#vehicleEngine").value, drive: $("#vehicleDrive").value, mileage: $("#vehicleMileage").value });
+    a.items.push(item);
+    a.nextLot = Math.max(a.nextLot, item.lot + 1);
+    await saveState();
+    $("#itemDialog").close();
+    render();
+    showToast(`Lot ${item.lot} saved with ${item.photos.length} photo${item.photos.length === 1 ? "" : "s"}`);
+  }
+  function viewItem(id) {
+    const a = currentAuction(), i = a.items.find((x) => x.id === id);
+    if (!i) return;
+    const vehicle = i.category === "Vehicles";
+    $("#itemViewContent").innerHTML = `<header class="dialog-head"><div><p class="eyebrow">Lot ${i.lot} \xB7 ${esc(i.category)}</p><h2>${esc(i.title)}</h2></div><button type="button" class="icon-btn" data-close="itemViewDialog">\xD7</button></header><div class="item-view-gallery">${i.photos.map((p, n) => `<img src="${p}" alt="${esc(i.title)} photo ${n + 1}">`).join("")}</div><div class="item-view-details"><div class="detail-table"><div class="detail-cell"><small>Condition</small><strong>${esc(i.condition)}</strong></div><div class="detail-cell"><small>Starting bid</small><strong>${money(i.startingBid)}</strong></div><div class="detail-cell"><small>Status</small><strong>${esc(i.status)}</strong></div>${vehicle ? `<div class="detail-cell"><small>VIN</small><strong>${esc(i.vin || "Not entered")}</strong></div><div class="detail-cell"><small>Vehicle</small><strong>${esc([i.year, i.make, i.model].filter(Boolean).join(" ") || "Not decoded")}</strong></div><div class="detail-cell"><small>Mileage</small><strong>${i.mileage ? Number(i.mileage).toLocaleString() : "Not entered"}</strong></div>` : ""}</div><p>${esc(i.description)}</p><button class="btn secondary" data-delete-item="${i.id}">Delete demo item</button></div>`;
+    $("#itemViewDialog").showModal();
+  }
+  async function deleteItem(id) {
+    if (!confirm("Delete this item from the demo catalog?")) return;
+    const a = currentAuction();
+    a.items = a.items.filter((i) => i.id !== id);
+    await saveState();
+    $("#itemViewDialog").close();
+    render();
+    showToast("Item deleted");
+  }
+  function csvCell(value) {
+    const text = String(value ?? "");
+    return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  }
+  function csv(rows) {
+    return "\uFEFF" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n");
+  }
+  function safeName(value) {
+    return String(value || "auction").trim().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "auction";
+  }
+  function photoNames(item) {
+    return (item.photos || []).map((_, index) => `${item.lot}-${index + 1}.jpg`);
+  }
+  function exportIssues(auction) {
+    const issues = [];
+    if (!auction.items.length) issues.push("Add at least one lot");
+    auction.items.forEach((item) => {
+      if (!item.title) issues.push(`Lot ${item.lot}: missing title`);
+      if (!item.description) issues.push(`Lot ${item.lot}: missing description`);
+      if (!item.photos?.length) issues.push(`Lot ${item.lot}: missing photo`);
+      if (item.category === "Vehicles" && !item.vin) issues.push(`Lot ${item.lot}: VIN not entered`);
+    });
+    return issues;
+  }
+  function platformCatalog(platform, auction) {
+    const common = (item) => ({ lot: item.lot, title: item.title, description: item.description, category: item.category, condition: item.condition, startingBid: item.startingBid, quantity: 1, images: photoNames(item).join("|"), vin: item.vin || "", year: item.year || "", make: item.make || "", model: item.model || "", trim: item.trim || "", mileage: item.mileage || "" });
+    const values = auction.items.slice().sort((a, b) => a.lot - b.lot).map(common);
+    if (platform === "auctionflex") return [["Consignor Code", "Inventory Number", "Lot Number", "Lead", "Description", "Quantity", "Reserve", "Low Estimate", "High Estimate", "Category", "Condition", "Starting Bid", "Image Filenames", "VIN", "Year", "Make", "Model", "Trim", "Mileage"], ...values.map((v) => ["HOUSE", v.lot, v.lot, v.title, v.description, v.quantity, "", "", "", v.category, v.condition, v.startingBid, v.images, v.vin, v.year, v.make, v.model, v.trim, v.mileage])];
+    if (platform === "proxibid") return [["Lot Number", "Title", "Description", "Category", "Quantity", "Starting Bid", "Reserve", "Condition", "Image Files", "VIN", "Year", "Make", "Model", "Mileage"], ...values.map((v) => [v.lot, v.title, v.description, v.category, v.quantity, v.startingBid, "", v.condition, v.images, v.vin, v.year, v.make, v.model, v.mileage])];
+    if (platform === "ebay") return [["SKU", "Title", "Description", "Condition", "Quantity", "Price", "Category", "Image Files", "VIN", "Year", "Make", "Model", "Mileage"], ...values.map((v) => [`LOT-${v.lot}`, v.title, v.description, v.condition, v.quantity, v.startingBid, v.category, v.images, v.vin, v.year, v.make, v.model, v.mileage])];
+    return [["Lot Number", "Title", "Description", "Category", "Condition", "Starting Bid", "Quantity", "Image Files", "VIN", "Year", "Make", "Model", "Trim", "Mileage"], ...values.map((v) => [v.lot, v.title, v.description, v.category, v.condition, v.startingBid, v.quantity, v.images, v.vin, v.year, v.make, v.model, v.trim, v.mileage])];
+  }
+  function exportSettings() {
+    return { destination: $("#exportPlatform").value, biddingType: $("#exportBiddingType").value, buyersPremiumPercent: Number($("#exportPremium").value) || 0, lotStaggerSeconds: Number($("#exportStagger").value) || 0, softCloseMinutes: Number($("#exportSoftClose").value) || 0, pickupShipping: $("#exportPickup").value.trim(), terms: $("#exportTerms").value.trim() };
+  }
+  function renderExportSummary() {
+    const a = currentAuction(), issues = exportIssues(a), items = a.items.length, photos = a.items.reduce((sum, item) => sum + (item.photos?.length || 0), 0);
+    $("#exportSummary").innerHTML = `<div class="export-counts"><div><strong>${items}</strong><span>lots</span></div><div><strong>${photos}</strong><span>photos</span></div><div><strong>${issues.length}</strong><span>checks</span></div></div>${issues.length ? `<div class="export-warnings"><strong>Review before publishing</strong><ul>${issues.slice(0, 6).map((issue) => `<li>${esc(issue)}</li>`).join("")}${issues.length > 6 ? `<li>and ${issues.length - 6} more</li>` : ""}</ul></div>` : `<div class="export-ready">\u2713 Catalog has the core fields needed for export</div>`}`;
+  }
+  function openExportDialog() {
+    if (!currentAuction()) return;
+    renderExportSummary();
+    $("#exportDialog").showModal();
+  }
+  async function downloadCatalogPackage(e) {
+    e.preventDefault();
+    const auction = currentAuction();
+    if (!auction?.items.length) return showToast("Add an item before exporting");
+    setBusy(true, "Building catalog ZIP\u2026");
+    try {
+      await loadScript("https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js", "JSZip");
+      const platform = $("#exportPlatform").value, zip = new JSZip(), manifest = [["Lot Number", "Photo Number", "Filename"]];
+      zip.file("catalog.csv", csv(platformCatalog(platform, auction)));
+      zip.file("auction-settings.json", JSON.stringify({ auction: { name: auction.name, type: auction.type, date: auction.date, location: auction.location }, publishing: exportSettings() }, null, 2));
+      for (const item of auction.items) {
+        for (let index = 0; index < (item.photos || []).length; index++) {
+          const name = `${item.lot}-${index + 1}.jpg`;
+          manifest.push([item.lot, index + 1, name]);
+          try {
+            const blob2 = await (await fetch(item.photos[index])).blob();
+            zip.file(`photos/${name}`, blob2);
+          } catch {
+          }
+        }
+      }
+      zip.file("photo-manifest.csv", csv(manifest));
+      zip.file("README.txt", `HammerList catalog export
+
+Destination: ${$("#exportPlatform").selectedOptions[0].textContent}
+Auction: ${auction.name}
+
+For Auction Flex: import catalog.csv, map the spreadsheet columns, and import the photos folder using lot-number filenames. Review auction-level settings in auction-settings.json before uploading to HiBid.
+
+For other platforms: use catalog.csv as the platform-ready working file and confirm the current vendor template or authorized API requirements before publishing.`);
+      const blob = await zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } }), filename = `${safeName(auction.name)}-${platform}.zip`;
+      if (isNative) {
+        const result = await Filesystem.writeFile({ path: filename, data: await blobToBase64(blob), directory: Directory.Cache, recursive: true });
+        await Share.share({ title: `${auction.name} catalog`, text: "HammerList auction catalog package", files: [result.uri], dialogTitle: "Save or share catalog ZIP" });
+        showToast("Catalog ZIP ready to save or share");
+      } else {
+        const url = URL.createObjectURL(blob), link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2e3);
+        showToast("Catalog ZIP downloaded");
+      }
+      $("#exportDialog").close();
+    } catch (error) {
+      showToast(error.message || "The catalog package could not be created");
+    } finally {
+      setBusy(false);
+    }
+  }
+  $("#loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if ($("#loginEmail").value.trim().toLowerCase() !== "auctioneer@hammerlist.app" || $("#loginPassword").value !== "demo123") return showToast("Use the demo credentials shown below the form");
+    await Promise.race([stateReady, new Promise((resolve2) => setTimeout(resolve2, 1200))]);
+    if (!state) state = freshSeed();
+    sessionStorage.setItem("hammerlist-session", $("#loginEmail").value.trim());
+    startApp();
+  });
+  function startApp() {
+    $("#loginView").classList.add("hidden");
+    $("#appView").classList.remove("hidden");
+    $("#signedInEmail").textContent = sessionStorage.getItem("hammerlist-session") || "auctioneer@hammerlist.app";
+    render();
+  }
+  function logout() {
+    sessionStorage.removeItem("hammerlist-session");
+    $("#appView").classList.add("hidden");
+    $("#loginView").classList.remove("hidden");
+  }
+  $("#logoutBtn").onclick = logout;
+  $("#profileBtn").onclick = logout;
+  $("#menuBtn").onclick = () => $("#sidebar").classList.toggle("open");
+  $("#auctionSelect").onchange = async (e) => {
+    state.selectedAuctionId = e.target.value;
+    await saveState();
+    render();
+  };
+  $$(".nav-item").forEach((b) => b.onclick = () => {
+    route = b.dataset.route;
+    $("#sidebar").classList.remove("open");
+    render();
+  });
+  document.addEventListener("click", async (e) => {
+    const action = e.target.closest("[data-action]")?.dataset.action;
+    if (action === "new-auction") openAuctionDialog();
+    if (action === "add-item") openItem();
+    if (action === "export") openExportDialog();
+    if (action === "auctions") {
+      route = "auctions";
+      render();
+    }
+    const auctionId = e.target.closest("[data-select-auction]")?.dataset.selectAuction;
+    if (auctionId) {
+      state.selectedAuctionId = auctionId;
+      route = "dashboard";
+      await saveState();
+      render();
+    }
+    const itemId = e.target.closest("[data-item]")?.dataset.item;
+    if (itemId) viewItem(itemId);
+    const remove = e.target.closest("[data-remove-photo]")?.dataset.removePhoto;
+    if (remove !== void 0) {
+      draftPhotos.splice(Number(remove), 1);
+      renderPhotoGrid();
+    }
+    const del = e.target.closest("[data-delete-item]")?.dataset.deleteItem;
+    if (del) deleteItem(del);
+    const close = e.target.closest("[data-close]")?.dataset.close;
+    if (close) $("#" + close).close();
+  });
+  $("#auctionForm").addEventListener("submit", createAuction);
+  $("#cameraInput").onchange = (e) => addFiles(e.target.files);
+  $("#libraryInput").onchange = (e) => addFiles(e.target.files);
+  $("#vinCameraInput").onchange = (e) => scanVinCamera(e.target.files);
+  $("#scanBtn").onclick = () => runAI("primary");
+  $("#secondOpinionBtn").onclick = () => runAI("secondary");
+  $("#continueBtn").onclick = showDetailsStep;
+  $("#backItemBtn").onclick = showPhotoStep;
+  $("#closeItem").onclick = () => $("#itemDialog").close();
+  $$('input[name="itemKind"]').forEach((r) => r.onchange = () => setItemKind(r.value));
+  $("#itemCategory").onchange = () => setItemKind($("#itemCategory").value === "Vehicles" ? "vehicle" : $("#itemCategory").value === "Farm Equipment" ? "farm" : "estate");
+  $("#decodeVinBtn").onclick = decodeVin;
+  $("#scanVinBtn").onclick = scanVin;
+  $("#itemForm").addEventListener("submit", saveItem);
+  $("#exportForm").addEventListener("submit", downloadCatalogPackage);
+  $("#exportPlatform").onchange = renderExportSummary;
+  $("#mobileAdd").onclick = openItem;
+  if (isNative) {
+    $("#takePhotoControl").addEventListener("click", (event) => {
+      event.preventDefault();
+      takeNativeItemPhoto();
+    });
+    $("#choosePhotosControl").addEventListener("click", (event) => {
+      event.preventDefault();
+      chooseNativeItemPhotos();
+    });
+    $("#vinPhotoControl").addEventListener("click", (event) => {
+      event.preventDefault();
+      takeNativeVinPhoto();
+    });
+  }
+  var stateReady = loadState();
+  stateReady.then(() => {
+    if (sessionStorage.getItem("hammerlist-session")) startApp();
+  }).catch(() => {
+    state = freshSeed();
+  });
+})();
+/*! Bundled license information:
+
+@capacitor/core/dist/index.js:
+  (*! Capacitor: https://capacitorjs.com/ - MIT License *)
+*/
 </script></body></html>

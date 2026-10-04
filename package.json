@@ -1,0 +1,28 @@
+{
+  "name": "hammerlist-auction-cataloging",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:web": "node scripts/build-github.mjs",
+    "validate": "node scripts/validate-artifact.mjs",
+    "qa": "npm run build && npm run validate && node scripts/qa.mjs",
+    "android:add": "npm run build:web && npx cap add android",
+    "android:sync": "npm run build:web && npx cap sync android",
+    "android:open": "npm run android:sync && npx cap open android",
+    "android:run": "npm run android:sync && npx cap run android",
+    "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/camera": "^8.2.5",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/filesystem": "^8.1.4",
+    "@capacitor/share": "^8.0.3",
+    "esbuild": "^0.25.12"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
