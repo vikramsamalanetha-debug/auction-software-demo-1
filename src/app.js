@@ -1,4 +1,5 @@
 import { Capacitor } from "@capacitor/core";
+import { App } from "@capacitor/app";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
@@ -12,8 +13,14 @@ const seed={selectedAuctionId:"auction-1",auctions:[{id:"auction-1",name:"Johnso
 {id:"lot-128",lot:128,title:"1972 Ford F-250 Pickup",category:"Vehicles",condition:"Fair",startingBid:1800,description:"Vintage Ford pickup. Verify VIN, mileage, title status, engine, and running condition before publishing.",confidence:91,status:"Ready",photos:["assets/truck.jpg"],vin:"",year:"1972",make:"Ford",model:"F-250",trim:"",body:"Pickup",engine:"",drive:"",mileage:"",createdAt:"2026-09-18T10:20:00Z"}]}]};
 let state=null,route="dashboard",draftPhotos=[],vinPhoto="",working=false,visionModelPromise=null;
 const isNative=Capacitor.isNativePlatform();
+const authStore=isNative?localStorage:sessionStorage;
 const apiBase=String(globalThis.HAMMERLIST_API_BASE_URL||"").replace(/\/+$/,"");
 const apiUrl=path=>apiBase?`${apiBase}${path}`:`.${path}`;
+const pendingCameraKey="hammerlist-pending-camera";
+
+function rememberCamera(action){localStorage.setItem(pendingCameraKey,JSON.stringify({action,kind:itemKind(),auctionId:state?.selectedAuctionId||""}))}
+function clearPendingCamera(){localStorage.removeItem(pendingCameraKey)}
+function pendingCamera(){try{return JSON.parse(localStorage.getItem(pendingCameraKey)||"null")}catch{return null}}
 
 function nativeCancelled(error){return /cancel|user cancelled|user canceled/i.test(String(error?.message||error||""))}
 async function nativePhotoFile(photo,prefix="photo"){
@@ -22,9 +29,9 @@ async function nativePhotoFile(photo,prefix="photo"){
   if(!response.ok)throw new Error("The selected photo could not be opened.");
   return new File([blob],`${prefix}-${Date.now()}.${photo.format||"jpeg"}`,{type:blob.type||`image/${photo.format||"jpeg"}`});
 }
-async function takeNativeItemPhoto(){if(working)return;try{const photo=await Camera.getPhoto({source:CameraSource.Camera,resultType:CameraResultType.Uri,quality:88,width:1800,correctOrientation:true,saveToGallery:false});await addFiles([await nativePhotoFile(photo,"item")])}catch(error){if(!nativeCancelled(error))showToast(error.message||"The camera could not be opened.")}}
-async function chooseNativeItemPhotos(){if(working)return;const remaining=8-draftPhotos.length;if(!remaining)return showToast("Eight photos is the limit for one item");try{const result=await Camera.pickImages({quality:88,width:1800,correctOrientation:true,limit:remaining});const files=[];for(const photo of result.photos||[])files.push(await nativePhotoFile(photo,"item"));await addFiles(files)}catch(error){if(!nativeCancelled(error))showToast(error.message||"The photo library could not be opened.")}}
-async function takeNativeVinPhoto(){if(working)return;try{const photo=await Camera.getPhoto({source:CameraSource.Camera,resultType:CameraResultType.Uri,quality:94,width:2200,correctOrientation:true,saveToGallery:false});await scanVinCamera([await nativePhotoFile(photo,"vin")])}catch(error){if(!nativeCancelled(error))$("#vinMessage").textContent=error.message||"The camera could not be opened."}}
+async function takeNativeItemPhoto(){if(working)return;rememberCamera("item");try{const photo=await Camera.getPhoto({source:CameraSource.Camera,resultType:CameraResultType.Uri,quality:82,width:1400,correctOrientation:true,saveToGallery:false});await addFiles([await nativePhotoFile(photo,"item")]);clearPendingCamera()}catch(error){clearPendingCamera();if(!nativeCancelled(error))showToast(error.message||"The camera could not be opened.")}}
+async function chooseNativeItemPhotos(){if(working)return;const remaining=8-draftPhotos.length;if(!remaining)return showToast("Eight photos is the limit for one item");rememberCamera("library");try{const result=await Camera.pickImages({quality:82,width:1400,correctOrientation:true,limit:remaining});const files=[];for(const photo of result.photos||[])files.push(await nativePhotoFile(photo,"item"));await addFiles(files);clearPendingCamera()}catch(error){clearPendingCamera();if(!nativeCancelled(error))showToast(error.message||"The photo library could not be opened.")}}
+async function takeNativeVinPhoto(){if(working)return;rememberCamera("vin");try{const photo=await Camera.getPhoto({source:CameraSource.Camera,resultType:CameraResultType.Uri,quality:90,width:1800,correctOrientation:true,saveToGallery:false});await scanVinCamera([await nativePhotoFile(photo,"vin")]);clearPendingCamera()}catch(error){clearPendingCamera();if(!nativeCancelled(error))$("#vinMessage").textContent=error.message||"The camera could not be opened."}}
 function blobToBase64(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]||"");reader.onerror=reject;reader.readAsDataURL(blob)})}
 
 function db(){return new Promise((resolve,reject)=>{const r=indexedDB.open("hammerlist-demo",1);r.onupgradeneeded=()=>r.result.createObjectStore("app");r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
@@ -87,12 +94,36 @@ function renderExportSummary(){const a=currentAuction(),issues=exportIssues(a),i
 function openExportDialog(){if(!currentAuction())return;renderExportSummary();$("#exportDialog").showModal()}
 async function downloadCatalogPackage(e){e.preventDefault();const auction=currentAuction();if(!auction?.items.length)return showToast("Add an item before exporting");setBusy(true,"Building catalog ZIP…");try{await loadScript("https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js","JSZip");const platform=$("#exportPlatform").value,zip=new JSZip(),manifest=[["Lot Number","Photo Number","Filename"]];zip.file("catalog.csv",csv(platformCatalog(platform,auction)));zip.file("auction-settings.json",JSON.stringify({auction:{name:auction.name,type:auction.type,date:auction.date,location:auction.location},publishing:exportSettings()},null,2));for(const item of auction.items){for(let index=0;index<(item.photos||[]).length;index++){const name=`${item.lot}-${index+1}.jpg`;manifest.push([item.lot,index+1,name]);try{const blob=await (await fetch(item.photos[index])).blob();zip.file(`photos/${name}`,blob)}catch{}}}zip.file("photo-manifest.csv",csv(manifest));zip.file("README.txt",`HammerList catalog export\n\nDestination: ${$("#exportPlatform").selectedOptions[0].textContent}\nAuction: ${auction.name}\n\nFor Auction Flex: import catalog.csv, map the spreadsheet columns, and import the photos folder using lot-number filenames. Review auction-level settings in auction-settings.json before uploading to HiBid.\n\nFor other platforms: use catalog.csv as the platform-ready working file and confirm the current vendor template or authorized API requirements before publishing.`);const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}}),filename=`${safeName(auction.name)}-${platform}.zip`;if(isNative){const result=await Filesystem.writeFile({path:filename,data:await blobToBase64(blob),directory:Directory.Cache,recursive:true});await Share.share({title:`${auction.name} catalog`,text:"HammerList auction catalog package",files:[result.uri],dialogTitle:"Save or share catalog ZIP"});showToast("Catalog ZIP ready to save or share")}else{const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);showToast("Catalog ZIP downloaded")}$("#exportDialog").close()}catch(error){showToast(error.message||"The catalog package could not be created")}finally{setBusy(false)}}
 
-$("#loginForm").addEventListener("submit",async e=>{e.preventDefault();if($("#loginEmail").value.trim().toLowerCase()!=="auctioneer@hammerlist.app"||$("#loginPassword").value!=="demo123")return showToast("Use the demo credentials shown below the form");await Promise.race([stateReady,new Promise(resolve=>setTimeout(resolve,1200))]);if(!state)state=freshSeed();sessionStorage.setItem("hammerlist-session",$("#loginEmail").value.trim());startApp()});
-function startApp(){$("#loginView").classList.add("hidden");$("#appView").classList.remove("hidden");$("#signedInEmail").textContent=sessionStorage.getItem("hammerlist-session")||"auctioneer@hammerlist.app";render()}
-function logout(){sessionStorage.removeItem("hammerlist-session");$("#appView").classList.add("hidden");$("#loginView").classList.remove("hidden")}
+$("#loginForm").addEventListener("submit",async e=>{e.preventDefault();if($("#loginEmail").value.trim().toLowerCase()!=="auctioneer@hammerlist.app"||$("#loginPassword").value!=="demo123")return showToast("Use the demo credentials shown below the form");await Promise.race([stateReady,new Promise(resolve=>setTimeout(resolve,1200))]);if(!state)state=freshSeed();authStore.setItem("hammerlist-session",$("#loginEmail").value.trim());startApp()});
+function startApp(){$("#loginView").classList.add("hidden");$("#appView").classList.remove("hidden");$("#signedInEmail").textContent=authStore.getItem("hammerlist-session")||"auctioneer@hammerlist.app";render()}
+function logout(){authStore.removeItem("hammerlist-session");clearPendingCamera();$("#appView").classList.add("hidden");$("#loginView").classList.remove("hidden")}
 $("#logoutBtn").onclick=logout;$("#profileBtn").onclick=logout;$("#menuBtn").onclick=()=>$("#sidebar").classList.toggle("open");$("#auctionSelect").onchange=async e=>{state.selectedAuctionId=e.target.value;await saveState();render()};
 $$('.nav-item').forEach(b=>b.onclick=()=>{route=b.dataset.route;$("#sidebar").classList.remove("open");render()});
 document.addEventListener("click",async e=>{const action=e.target.closest("[data-action]")?.dataset.action;if(action==="new-auction")openAuctionDialog();if(action==="add-item")openItem();if(action==="export")openExportDialog();if(action==="auctions"){route="auctions";render()}const auctionId=e.target.closest("[data-select-auction]")?.dataset.selectAuction;if(auctionId){state.selectedAuctionId=auctionId;route="dashboard";await saveState();render()}const itemId=e.target.closest("[data-item]")?.dataset.item;if(itemId)viewItem(itemId);const remove=e.target.closest("[data-remove-photo]")?.dataset.removePhoto;if(remove!==undefined){draftPhotos.splice(Number(remove),1);renderPhotoGrid()}const del=e.target.closest("[data-delete-item]")?.dataset.deleteItem;if(del)deleteItem(del);const close=e.target.closest("[data-close]")?.dataset.close;if(close)$("#"+close).close()});
 $("#auctionForm").addEventListener("submit",createAuction);$("#cameraInput").onchange=e=>addFiles(e.target.files);$("#libraryInput").onchange=e=>addFiles(e.target.files);$("#vinCameraInput").onchange=e=>scanVinCamera(e.target.files);$("#scanBtn").onclick=()=>runAI("primary");$("#secondOpinionBtn").onclick=()=>runAI("secondary");$("#continueBtn").onclick=showDetailsStep;$("#backItemBtn").onclick=showPhotoStep;$("#closeItem").onclick=()=>$("#itemDialog").close();$$('input[name="itemKind"]').forEach(r=>r.onchange=()=>setItemKind(r.value));$("#itemCategory").onchange=()=>setItemKind($("#itemCategory").value==="Vehicles"?"vehicle":$("#itemCategory").value==="Farm Equipment"?"farm":"estate");$("#decodeVinBtn").onclick=decodeVin;$("#scanVinBtn").onclick=scanVin;$("#itemForm").addEventListener("submit",saveItem);$("#exportForm").addEventListener("submit",downloadCatalogPackage);$("#exportPlatform").onchange=renderExportSummary;$("#mobileAdd").onclick=openItem;
-if(isNative){$("#takePhotoControl").addEventListener("click",event=>{event.preventDefault();takeNativeItemPhoto()});$("#choosePhotosControl").addEventListener("click",event=>{event.preventDefault();chooseNativeItemPhotos()});$("#vinPhotoControl").addEventListener("click",event=>{event.preventDefault();takeNativeVinPhoto()})}
-const stateReady=loadState();stateReady.then(()=>{if(sessionStorage.getItem("hammerlist-session"))startApp()}).catch(()=>{state=freshSeed()});
+const stateReady=loadState();
+async function restoreCameraResult(result){
+  const context=pendingCamera();
+  if(result.pluginId!=="Camera"||!context)return;
+  if(!result.success||!result.data){clearPendingCamera();return}
+  try{
+    await stateReady;
+    if(!state)state=freshSeed();
+    if(context.auctionId&&state.auctions.some(a=>a.id===context.auctionId))state.selectedAuctionId=context.auctionId;
+    if(authStore.getItem("hammerlist-session"))startApp();
+    openItem();
+    setItemKind(context.kind||"estate");
+    if(context.action==="library"){
+      const files=[];
+      for(const photo of result.data.photos||[])files.push(await nativePhotoFile(photo,"item"));
+      await addFiles(files);
+    }else{
+      const file=await nativePhotoFile(result.data,context.action==="vin"?"vin":"item");
+      if(context.action==="vin"){showDetailsStep();await scanVinCamera([file])}else await addFiles([file]);
+    }
+    showToast("Camera photo recovered")
+  }catch(error){showToast(error.message||"The camera photo could not be restored.")}finally{clearPendingCamera()}
+}
+
+if(isNative){$("#takePhotoControl").addEventListener("click",event=>{event.preventDefault();takeNativeItemPhoto()});$("#choosePhotosControl").addEventListener("click",event=>{event.preventDefault();chooseNativeItemPhotos()});$("#vinPhotoControl").addEventListener("click",event=>{event.preventDefault();takeNativeVinPhoto()});App.addListener("appRestoredResult",restoreCameraResult)}
+stateReady.then(()=>{if(authStore.getItem("hammerlist-session"))startApp()}).catch(()=>{state=freshSeed()});
