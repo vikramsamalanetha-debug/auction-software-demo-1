@@ -10,8 +10,8 @@ globalThis.fetch = async url => {
 try {
   const env = { GEMINI_API_KEY: "test" };
   const home = await (await worker.fetch(new Request("https://hammerlist.test/"), env)).text();
-  for (const marker of ["Welcome back", "Create an auction", "What are you adding?", "Estate sale / household item", "Farm equipment", "Smart photo scan", "Choose photos", "Open camera & scan VIN", "Prepare catalog package"]) if (!home.includes(marker)) throw new Error(`Missing UI marker: ${marker}`);
-  if (/Recognize with Gemini|providerLabel/.test(home)) throw new Error("AI provider name leaked into the customer UI");
+  for (const marker of ["Welcome back", "Create an auction", "What are you adding?", "Estate sale / household item", "Farm equipment", "Smart photo scan", "Choose photos", "24 photos", "Make cover", "Listing status", "Open camera & scan VIN", "Prepare catalog package"]) if (!home.includes(marker)) throw new Error(`Missing UI marker: ${marker}`);
+  if (/Recognize with Gemini|providerLabel|Second opinion/.test(home)) throw new Error("AI provider name or removed second-opinion control leaked into the customer UI");
   const recognized = await worker.fetch(new Request("https://hammerlist.test/api/recognize", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ images: ["data:image/jpeg;base64,AA=="], engine: "primary" }) }), env);
   const recognizedBody = await recognized.json();
   if (recognized.status !== 200 || recognizedBody.title !== "2020 Ford F-150 XLT" || "provider" in recognizedBody) throw new Error("Recognition contract failed");
