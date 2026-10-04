@@ -18,11 +18,20 @@
 .publishing-setup{display:grid;grid-template-columns:minmax(230px,.7fr) minmax(0,1.3fr);gap:20px;margin-bottom:19px;padding:20px;border:1px solid #c8d7cf;border-radius:17px;background:linear-gradient(135deg,#edf3ef,#fff)}.publishing-setup h2{margin:2px 0 4px;font-size:20px}.publishing-setup p{margin:0;color:var(--muted);font-size:13px}.configured-platforms{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px}.configured-platforms>span{display:grid;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#fff}.configured-platforms small{color:#197044;font-size:9px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}.configured-platforms strong{margin:2px 0;font-size:14px}.configured-platforms em{color:var(--muted);font-size:11px;font-style:normal}.configured-platforms .platform-request-note{border-style:dashed;background:#f8f9f7}.configured-platforms .platform-request-note small{color:#9b4b2f}
 @media(max-width:980px){.public-nav nav{display:none}.corporate-hero{grid-template-columns:1fr}.setup-preview{max-width:650px}.platform-grid,.process-grid{grid-template-columns:repeat(2,1fr)}.capability-grid{grid-template-columns:repeat(2,1fr)}.client-strip{justify-content:flex-start;overflow-x:auto;white-space:nowrap}.corporate-cta{align-items:flex-start;flex-direction:column}.publishing-setup{grid-template-columns:1fr}}
 @media(max-width:680px){.public-nav{height:70px;padding:0 12px}.public-nav .public-brand small,.public-nav-actions .secondary{display:none}.public-nav-actions{margin-left:auto}.public-nav-actions .btn{min-height:42px;padding:9px 11px;font-size:12px}.corporate-hero{min-height:auto;padding:56px 18px}.hero-copy h1{font-size:43px}.hero-lead{font-size:16px}.hero-actions{align-items:stretch;flex-direction:column}.hero-proof{display:grid}.setup-preview{padding:17px}.preview-platforms{grid-template-columns:repeat(2,1fr)}.public-section{padding:64px 18px}.section-intro h2{font-size:36px}.platform-grid,.process-grid,.capability-grid{grid-template-columns:1fr}.corporate-cta{margin:0 18px 64px;padding:28px 24px}.corporate-cta h2{font-size:30px}.public-footer{align-items:flex-start;flex-direction:column}.public-footer p{margin:0}.platform-options{grid-template-columns:1fr}.request-progress span{font-size:10px}.request-dialog .dialog-body{padding:18px}.request-dialog .dialog-foot{position:sticky;bottom:0;background:#fff}.photo-summary{align-items:flex-start;flex-direction:column}.item-view-actions{display:grid}.item-view-actions .btn{width:100%;margin-left:0}}
+
+/* Native authentication shell */
+.native-access{display:none}.native-shell{background:#0f3b30}.native-shell #loginView{min-height:100dvh;background:#0f3b30}.native-shell #loginView>.public-nav,.native-shell #loginView>main,.native-shell #loginView>.public-footer{display:none!important}.native-shell .native-access{display:grid;min-height:100dvh;padding:max(26px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));place-items:center;background:radial-gradient(circle at 80% 8%,#37685a 0 8%,transparent 32%),linear-gradient(150deg,#0d3027,#16483b 62%,#102e27);color:#fff}.native-access-inner{width:min(100%,440px)}.native-brand{text-align:center;margin-bottom:28px}.native-brand-mark{display:grid;place-items:center;width:68px;height:68px;margin:0 auto 14px;border-radius:20px;background:#fff;color:var(--orange);font-size:31px;box-shadow:0 16px 45px #04171166}.native-brand p{margin:0;font-size:22px;font-weight:950;letter-spacing:.16em}.native-brand small{color:#acc4ba;font-size:10px;font-weight:800;letter-spacing:.18em}.native-access-card{padding:26px;border-radius:24px;background:#fff;color:var(--ink);box-shadow:0 24px 70px #04171170}.native-access-card h1{margin:4px 0 8px;font-size:32px;letter-spacing:-.04em}.native-access-copy{margin:0 0 22px;color:var(--muted)}.native-login-form{display:grid;gap:14px}.native-login-form label{display:grid;gap:7px;font-size:13px;font-weight:800}.native-login-form input{min-height:52px;border:1px solid #cfd8d3;border-radius:12px;padding:0 14px;background:#fbfcfa;font:inherit}.native-signin{min-height:54px;margin-top:4px}.native-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#7d8983;font-size:12px}.native-divider:before,.native-divider:after{content:"";height:1px;flex:1;background:var(--line)}.native-demo-access{display:grid;gap:3px;margin-top:18px;padding:13px 15px;border-radius:12px;background:#f1f4f1;color:#52605a;font-size:12px}.native-demo-access strong{color:var(--green)}.native-security-note{margin:18px 0 0;text-align:center;color:#b8cdc4;font-size:12px}
+
+/* Web administration portal */
+.admin-view{min-height:100vh;background:#f1f3ef;color:var(--ink)}.admin-topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--line);background:#fff}.admin-topbar-actions{display:flex;align-items:center;gap:18px;color:var(--muted);font-size:13px}.admin-shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 76px)}.admin-sidebar{display:flex;flex-direction:column;padding:28px 17px;border-right:1px solid var(--line);background:#fff}.admin-sidebar>.eyebrow{padding:0 12px}.admin-sidebar nav{display:grid;gap:7px;margin-top:10px}.admin-nav{display:flex;align-items:center;gap:11px;width:100%;padding:13px 14px;border:0;border-radius:10px;background:transparent;color:#53605b;text-align:left;font:inherit;font-weight:800;cursor:pointer}.admin-nav.active{background:#e6efe9;color:var(--green)}.admin-side-note{margin-top:auto;padding:16px;border-radius:13px;background:#f2f4f1}.admin-side-note p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.5}.admin-main{padding:34px clamp(22px,4vw,58px)}.admin-page-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:24px}.admin-page-head h1{margin:4px 0 0;font-size:34px;letter-spacing:-.04em}.admin-page-head p:last-child{margin:5px 0 0;color:var(--muted)}.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px}.admin-stat{padding:19px;border:1px solid var(--line);border-radius:15px;background:#fff}.admin-stat span,.admin-stat strong{display:block}.admin-stat span{color:var(--muted);font-size:12px;font-weight:750}.admin-stat strong{margin-top:6px;font-size:27px}.admin-panel{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#fff}.admin-panel-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line)}.admin-panel-head h2{margin:0;font-size:20px}.admin-panel-head span{color:var(--muted);font-size:12px}.admin-table-wrap{overflow-x:auto}.admin-table{width:100%;border-collapse:collapse}.admin-table th,.admin-table td{padding:15px 20px;border-bottom:1px solid #e8ece9;text-align:left;vertical-align:middle}.admin-table th{background:#f8f9f7;color:#6f7a75;font-size:10px;letter-spacing:.08em;text-transform:uppercase}.admin-table td{font-size:13px}.admin-table tr:last-child td{border-bottom:0}.admin-company strong,.admin-company span{display:block}.admin-company span{margin-top:3px;color:var(--muted);font-size:12px}.platform-tags{display:flex;flex-wrap:wrap;gap:5px}.platform-tag{padding:4px 7px;border-radius:6px;background:#e9f0ec;color:var(--green);font-size:10px;font-weight:850}.status-pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#fff0cc;color:#7c5710;font-size:10px;font-weight:900;text-transform:uppercase}.status-pill.approved,.status-pill.active{background:#dff1e6;color:#17613e}.status-pill.declined{background:#f7e5e1;color:#983f2d}.empty-admin{padding:55px 24px;text-align:center;color:var(--muted)}.empty-admin strong{display:block;margin-bottom:6px;color:var(--ink);font-size:18px}.admin-request-dialog{width:min(780px,calc(100vw - 32px))}.admin-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.admin-detail{padding:14px;border-radius:11px;background:#f5f7f4}.admin-detail small,.admin-detail strong{display:block}.admin-detail small{margin-bottom:5px;color:var(--muted);font-size:10px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}.admin-detail.full{grid-column:1/-1}.admin-platform-config{margin-top:20px;padding:17px;border:1px solid var(--line);border-radius:13px}.admin-platform-config legend{padding:0 7px;font-weight:900}.admin-platform-checks{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.admin-platform-checks label{display:flex;align-items:center;gap:9px;padding:10px;border-radius:9px;background:#f4f6f3;font-size:13px;font-weight:750}.admin-platform-checks input{width:18px;height:18px;accent-color:var(--green)}.admin-dialog-actions{display:flex;gap:9px}.admin-dialog-actions .danger{color:#a43e2e}.admin-request-dialog .dialog-foot{align-items:center}.admin-client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.admin-client-card{padding:21px;border:1px solid var(--line);border-radius:16px;background:#fff}.admin-client-head{display:flex;justify-content:space-between;gap:12px}.admin-client-card h3{margin:0}.admin-client-card>p{margin:6px 0 16px;color:var(--muted);font-size:13px}.admin-client-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}.admin-client-meta div{padding:10px;border-radius:9px;background:#f5f7f4}.admin-client-meta small,.admin-client-meta strong{display:block}.admin-client-meta small{color:var(--muted);font-size:10px}.admin-client-card .btn{width:100%}
+@media(max-width:900px){.admin-shell{grid-template-columns:1fr}.admin-sidebar{display:block;padding:12px 16px;border-right:0;border-bottom:1px solid var(--line)}.admin-sidebar>.eyebrow,.admin-side-note{display:none}.admin-sidebar nav{display:flex;margin:0}.admin-stats{grid-template-columns:repeat(2,1fr)}.admin-client-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.native-access-card{padding:22px}.admin-topbar{height:68px;padding:0 14px}.admin-topbar .brand small,.admin-topbar-actions>span{display:none}.admin-main{padding:22px 14px}.admin-page-head{align-items:flex-start;flex-direction:column}.admin-page-head h1{font-size:28px}.admin-stats{grid-template-columns:1fr 1fr}.admin-stat{padding:14px}.admin-stat strong{font-size:23px}.admin-table th,.admin-table td{padding:12px}.admin-detail-grid{grid-template-columns:1fr}.admin-detail.full{grid-column:auto}.admin-dialog-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.admin-dialog-actions .btn:first-child{grid-column:1/-1}.admin-platform-checks{grid-template-columns:1fr}}
 </style><style>.boot-view{display:none;position:fixed;inset:0;z-index:1000;place-content:center;justify-items:center;gap:8px;background:#123c31;color:#fff}.boot-view .brand-mark{margin-bottom:8px;background:#fff;color:#d95f35}.boot-view strong{letter-spacing:.12em}.boot-view small{color:#cfddd8}.booting .boot-view{display:grid}.booting #loginView,.booting #appView{display:none!important}</style>
 </head><body class="booting">
 <section id="bootView" class="boot-view"><span class="brand-mark">⚒</span><strong>HAMMERLIST</strong><small>Returning to your catalog…</small></section>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <section id="loginView" class="public-view">
+<section class="native-access" aria-label="HammerList account access"><div class="native-access-inner"><div class="native-brand"><span class="native-brand-mark">⚒</span><p>HAMMERLIST</p><small>AUCTION OPERATIONS</small></div><div class="native-access-card"><p class="eyebrow">Approved client access</p><h1>Welcome back</h1><p class="native-access-copy">Sign in to continue to your auction workspace.</p><form id="nativeLoginForm" class="native-login-form"><label>Email address<input id="nativeLoginEmail" type="email" value="auctioneer@hammerlist.app" autocomplete="username" required></label><label>Password<input id="nativeLoginPassword" type="password" value="demo123" autocomplete="current-password" required></label><button class="btn primary wide native-signin" type="submit">Sign in</button></form><div class="native-divider"><span>New auction company?</span></div><button class="btn secondary wide" type="button" data-open-request>Request account</button><div class="native-demo-access"><strong>Demo access</strong><span>auctioneer@hammerlist.app</span><span>Password: demo123</span></div></div><p class="native-security-note">Secure company workspace</p></div></section>
 <header class="public-nav"><a class="public-brand" href="#top" aria-label="HammerList home"><span class="brand-mark">⚒</span><span><strong>HAMMERLIST</strong><small>AUCTION OPERATIONS</small></span></a><nav><a href="#platforms">Platforms</a><a href="#workflow">How it works</a><a href="#capabilities">Capabilities</a></nav><div class="public-nav-actions"><button class="btn secondary" type="button" data-open-login>Client sign in</button><button class="btn primary" type="button" data-open-request>Request account setup</button></div></header>
 <main id="top">
 <section class="corporate-hero"><div class="hero-copy"><p class="eyebrow">Auction catalog operations platform</p><h1>Build the catalog once.<br><span>Publish it where you sell.</span></h1><p class="hero-lead">HammerList gives auction companies one efficient workflow for photographing, describing, reviewing, and preparing lots for their preferred auction marketplaces.</p><div class="hero-actions"><button class="btn primary hero-btn" type="button" data-open-request>Request account setup</button><button class="btn secondary hero-btn" type="button" data-open-login>Open client workspace</button></div><div class="hero-proof"><span>✓ Guided company onboarding</span><span>✓ Platform-specific configuration</span><span>✓ Web and Android workflows</span></div></div><aside class="setup-preview"><div class="preview-head"><span class="live-dot"></span><span>Configured for your operation</span></div><div class="preview-company"><small>AUCTION COMPANY WORKSPACE</small><strong>Your catalog. Your process.</strong><p>We configure HammerList around the auction types, team, and selling platforms selected during setup.</p></div><div class="preview-flow"><div><span>1</span><strong>Capture inventory</strong><small>Photos, VINs, descriptions</small></div><div><span>2</span><strong>Review catalog</strong><small>Lots, status, cover photos</small></div><div><span>3</span><strong>Prepare publishing</strong><small>Mapped to selected platforms</small></div></div><div class="preview-platforms"><span>HiBid</span><span>Proxibid</span><span>eBay</span><span>Other</span></div></aside></section>
@@ -31,7 +40,7 @@
 <section id="workflow" class="public-section process-section"><div class="section-intro"><p class="eyebrow">Controlled onboarding</p><h2>No generic one-size-fits-all account.</h2><p>Every client requests setup first. We review the operation and activate a workspace that matches how that auction company actually works.</p></div><div class="process-grid"><article><span>01</span><h3>Request an account</h3><p>Share company information, auction volume, team size, and auction types.</p></article><article><span>02</span><h3>Select destinations</h3><p>Choose HiBid, Proxibid, eBay, or describe another marketplace or auction system.</p></article><article><span>03</span><h3>Configure workflow</h3><p>HammerList prepares the catalog fields, validation rules, and export options your team needs.</p></article><article><span>04</span><h3>Activate your team</h3><p>Approved users receive access to the web portal and installable Android workflow.</p></article></div></section>
 <section id="capabilities" class="public-section capability-section"><div class="section-intro"><p class="eyebrow">One operational workspace</p><h2>Faster in the field. Cleaner at publishing time.</h2></div><div class="capability-grid"><article><strong>Multi-photo lots</strong><p>Add up to 24 pictures, choose the catalog cover, and return later to add or remove images.</p></article><article><strong>Smart catalog assistance</strong><p>Create editable listing suggestions while keeping the auctioneer in control of every published detail.</p></article><article><strong>Vehicle cataloging</strong><p>Scan or enter a VIN, load official vehicle data, and record mileage, trim, body, engine, and drive type.</p></article><article><strong>Review readiness</strong><p>Keep lots in Draft, Needs review, or Ready status and resolve missing information before export.</p></article><article><strong>Portable catalog packages</strong><p>Prepare catalog spreadsheets, platform settings, photo manifests, and named image folders.</p></article><article><strong>Mobile-first operation</strong><p>Use the phone camera, photo library, and Android application without sacrificing the desktop portal.</p></article></div></section>
 <section class="corporate-cta"><div><p class="eyebrow">Ready to configure HammerList?</p><h2>Tell us how your auction company sells.</h2><p>We’ll use your answers to prepare the right account and publishing workflow.</p></div><button class="btn primary hero-btn" type="button" data-open-request>Start account request</button></section>
-</main><footer class="public-footer"><div class="public-brand"><span class="brand-mark">⚒</span><span><strong>HAMMERLIST</strong><small>AUCTION OPERATIONS</small></span></div><p>Catalog operations software for professional auction companies.</p><button class="text-btn" type="button" data-open-login>Client sign in</button></footer>
+</main><footer class="public-footer"><div class="public-brand"><span class="brand-mark">⚒</span><span><strong>HAMMERLIST</strong><small>AUCTION OPERATIONS</small></span></div><p>Catalog operations software for professional auction companies.</p><button class="text-btn" type="button" data-open-admin>Administration</button><button class="text-btn" type="button" data-open-login>Client sign in</button></footer>
 </section>
 <dialog id="loginDialog" class="dialog small-dialog access-dialog"><form id="loginForm"><header class="dialog-head"><div><p class="eyebrow">Approved client access</p><h2>Sign in to HammerList</h2><p class="muted">Use the account credentials provided during setup.</p></div><button type="button" class="icon-btn" data-close="loginDialog">×</button></header><div class="dialog-body stack"><label>Email<input id="loginEmail" type="email" value="auctioneer@hammerlist.app" autocomplete="username" required></label><label>Password<input id="loginPassword" type="password" value="demo123" autocomplete="current-password" required></label><button class="btn primary wide" type="submit">Sign in</button><div class="demo-access"><strong>Customer demo access</strong><span>auctioneer@hammerlist.app · demo123</span></div><p class="access-help">Need a company account? <button type="button" class="text-btn" data-open-request>Request account setup</button></p></div></form></dialog>
 <dialog id="requestDialog" class="dialog request-dialog"><form id="accountRequestForm"><header class="dialog-head"><div><p class="eyebrow">Company onboarding</p><h2>Request HammerList setup</h2><p id="requestStepLabel" class="muted">Step 1 of 3 · Company information</p></div><button type="button" class="icon-btn" data-close="requestDialog">×</button></header>
@@ -39,8 +48,11 @@
 <section class="dialog-body request-step" data-request-step="1"><div class="form-grid"><label class="full">Auction company name<input id="requestCompany" required placeholder="Example Auction Company"></label><label>Contact name<input id="requestName" required autocomplete="name"></label><label>Business email<input id="requestEmail" type="email" required autocomplete="email"></label><label>Phone number<input id="requestPhone" type="tel" required autocomplete="tel"></label><label>Company website<input id="requestWebsite" type="url" placeholder="https://"></label><label class="full">Primary service area<input id="requestArea" placeholder="City, state, or region"></label></div></section>
 <section class="dialog-body request-step hidden" data-request-step="2"><fieldset class="platform-picker"><legend>Where will you upload or publish auction listings?</legend><p>Select every destination your company expects to use.</p><div class="platform-options"><label><input type="checkbox" name="requestPlatform" value="HiBid"><span><strong>HiBid</strong><small>Including Auction Flex workflows</small></span></label><label><input type="checkbox" name="requestPlatform" value="Proxibid"><span><strong>Proxibid</strong><small>Catalog and photo preparation</small></span></label><label><input type="checkbox" name="requestPlatform" value="eBay"><span><strong>eBay</strong><small>General and vehicle listings</small></span></label><label><input type="checkbox" name="requestPlatform" value="Other"><span><strong>Another auction site</strong><small>Tell us what your team uses</small></span></label></div></fieldset><label id="otherPlatformField" class="hidden">Other website or software<input id="requestOtherPlatform" placeholder="Platform name or website address"></label><div id="platformRequestError" class="error-box hidden"></div></section>
 <section class="dialog-body request-step hidden" data-request-step="3"><div class="form-grid"><label>Auction types<select id="requestAuctionType"><option>Mixed auctions</option><option>Estate sales</option><option>Farm and equipment</option><option>Vehicle auctions</option><option>Multiple auction types</option></select></label><label>Approximate lots per month<select id="requestVolume"><option>Under 250</option><option>250–1,000</option><option>1,000–5,000</option><option>More than 5,000</option></select></label><label>Expected team size<select id="requestTeam"><option>1–2 users</option><option>3–5 users</option><option>6–15 users</option><option>16+ users</option></select></label><label>Current catalog software<input id="requestSoftware" placeholder="Auction Flex, spreadsheet, other"></label><label>Preferred start window<select id="requestTimeline"><option>As soon as possible</option><option>Within 30 days</option><option>Within 60–90 days</option><option>Just evaluating</option></select></label><label>Need Android field app?<select id="requestAndroid"><option>Yes</option><option>No</option><option>Not sure yet</option></select></label><label class="full">What should HammerList improve for your team?<textarea id="requestNotes" rows="4" placeholder="Describe your current cataloging and upload process, recurring problems, or special requirements."></textarea></label></div><div id="requestSummary" class="request-summary"></div></section>
-<section id="requestSuccess" class="dialog-body request-success hidden"><span class="success-mark">✓</span><p class="eyebrow">Request received</p><h2>Your setup profile is ready for review.</h2><p id="requestSuccessMessage"></p><div id="requestSuccessPlan" class="request-summary"></div><button type="button" class="btn dark" data-close="requestDialog">Return to website</button></section>
+<section id="requestSuccess" class="dialog-body request-success hidden"><span class="success-mark">✓</span><p class="eyebrow">Request received</p><h2>Your setup profile is ready for review.</h2><p id="requestSuccessMessage"></p><div id="requestSuccessPlan" class="request-summary"></div><button id="requestSuccessClose" type="button" class="btn dark" data-close="requestDialog">Return to website</button></section>
 <footer id="requestFooter" class="dialog-foot"><button type="button" id="requestBackBtn" class="btn secondary hidden">Back</button><span class="spacer"></span><button type="button" id="requestNextBtn" class="btn primary">Continue to platforms</button><button type="submit" id="requestSubmitBtn" class="btn primary hidden">Submit setup request</button></footer></form></dialog>
+<dialog id="adminLoginDialog" class="dialog small-dialog access-dialog"><form id="adminLoginForm"><header class="dialog-head"><div><p class="eyebrow">Company administration</p><h2>Admin portal</h2><p class="muted">Review account requests and configure client workspaces.</p></div><button type="button" class="icon-btn" data-close="adminLoginDialog">×</button></header><div class="dialog-body stack"><label>Admin email<input id="adminEmail" type="email" value="admin@hammerlist.app" autocomplete="username" required></label><label>Password<input id="adminPassword" type="password" value="admin123" autocomplete="current-password" required></label><button class="btn primary wide" type="submit">Open admin portal</button><div class="demo-access"><strong>Administrator demo access</strong><span>admin@hammerlist.app · admin123</span></div></div></form></dialog>
+<section id="adminView" class="admin-view hidden"><header class="admin-topbar"><div class="brand"><span class="brand-mark">⚒</span><div><strong>HAMMERLIST</strong><small>ADMINISTRATION</small></div></div><div class="admin-topbar-actions"><span>Company setup portal</span><button id="adminSignOut" class="btn secondary" type="button">Sign out</button></div></header><div class="admin-shell"><aside class="admin-sidebar"><p class="eyebrow">Workspace</p><nav><button class="admin-nav active" type="button" data-admin-route="requests"><span>◎</span>Account requests</button><button class="admin-nav" type="button" data-admin-route="clients"><span>▦</span>Client accounts</button></nav><div class="admin-side-note"><strong>Demo administration</strong><p>Requests and account configurations are stored in this browser for QA.</p></div></aside><main id="adminContent" class="admin-main"></main></div></section>
+<dialog id="adminRequestDialog" class="dialog admin-request-dialog"><div id="adminRequestContent"></div></dialog>
 <div id="appView" class="app hidden"><header class="topbar"><button class="icon-btn mobile-only" id="menuBtn" aria-label="Open navigation">☰</button><div class="brand"><span class="brand-mark">⚒</span><div><strong>HAMMERLIST</strong><small>AUCTION OPERATIONS</small></div></div><div class="auction-switcher"><span>Current auction</span><select id="auctionSelect" aria-label="Current auction"></select></div><button class="profile-btn" id="profileBtn" title="Sign out">KS</button></header><div class="shell"><aside id="sidebar" class="sidebar"><nav><button data-route="dashboard" class="nav-item active"><span>▦</span>Dashboard</button><button data-route="inventory" class="nav-item"><span>▤</span>Inventory</button><button data-route="auctions" class="nav-item"><span>◫</span>Auctions</button></nav><div class="side-foot"><small>Signed in as</small><strong id="signedInEmail"></strong><button class="text-btn" id="logoutBtn">Sign out</button></div></aside><main id="mainContent" class="main"></main></div><button id="mobileAdd" class="mobile-add hidden">＋ Add item</button></div>
 <dialog id="auctionDialog" class="dialog small-dialog"><form id="auctionForm"><header class="dialog-head"><div><p class="eyebrow">New auction</p><h2>Create an auction</h2></div><button type="button" class="icon-btn" data-close="auctionDialog">×</button></header><div class="dialog-body form-grid"><label class="full">Auction name<input id="auctionName" placeholder="Johnson Farm & Estate Auction" required></label><label>Auction type<select id="auctionType"><option>Estate Sale</option><option>Farm</option><option>Vehicle</option><option>Mixed</option></select></label><label>Auction date<input id="auctionDate" type="date" required></label><label class="full">Location<input id="auctionLocation" placeholder="Lexington, Tennessee"></label><label>First lot number<input id="auctionFirstLot" type="number" min="1" value="101"></label><label>Status<select id="auctionStatus"><option>Draft</option><option>Cataloging</option><option>Ready</option></select></label></div><footer class="dialog-foot"><button type="button" class="btn secondary" data-close="auctionDialog">Cancel</button><span class="spacer"></span><button type="submit" class="btn primary">Create auction</button></footer></form></dialog>
 <dialog id="itemDialog" class="dialog item-dialog"><form id="itemForm">
@@ -1907,6 +1919,7 @@
   var editingItemId = null;
   var MAX_PHOTOS = 24;
   var isNative = Capacitor.isNativePlatform();
+  if (isNative) document.body.classList.add("native-shell");
   var authStore = isNative ? localStorage : sessionStorage;
   var apiBase = String(globalThis.HAMMERLIST_API_BASE_URL || "").replace(/\/+$/, "");
   var apiUrl = (path) => apiBase ? `${apiBase}${path}` : `.${path}`;
@@ -2606,6 +2619,7 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
     $("#requestFooter").classList.remove("hidden");
     $("#otherPlatformField").classList.add("hidden");
     $("#platformRequestError").classList.add("hidden");
+    $("#requestSuccessClose").textContent = isNative ? "Return to sign in" : "Return to website";
     showRequestStep(1);
     $("#requestDialog").showModal();
   }
@@ -2642,24 +2656,167 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
       }
     } catch {
     }
-    const saved = JSON.parse(localStorage.getItem("hammerlist-account-requests") || "[]");
-    saved.push({ ...payload, requestId, createdAt: (/* @__PURE__ */ new Date()).toISOString(), delivery: submitted ? "submitted" : "demo" });
-    localStorage.setItem("hammerlist-account-requests", JSON.stringify(saved.slice(-10)));
+    const saved = loadAdminRequests();
+    saved.push({ ...payload, requestId, createdAt: (/* @__PURE__ */ new Date()).toISOString(), delivery: submitted ? "submitted" : "demo", status: "Pending" });
+    saveAdminRequests(saved.slice(-50));
     $$("[data-request-step]").forEach((section) => section.classList.add("hidden"));
     $("#requestFooter").classList.add("hidden");
     $("#requestSuccess").classList.remove("hidden");
     $("#requestStepLabel").textContent = `Request ${requestId}`;
-    $("#requestSuccessMessage").textContent = `Thank you, ${payload.contactName}. HammerList has prepared a setup profile for ${payload.company}. This demo keeps a copy on this device; live deployment can route it to the account approval team.`;
+    $("#requestSuccessMessage").textContent = `Thank you, ${payload.contactName}. HammerList has prepared a setup profile for ${payload.company}. The administration team can now review the request and configure your workspace.`;
     $("#requestSuccessPlan").innerHTML = `<strong>${esc(payload.company)}</strong>Publishing setup: ${esc(payload.platforms.join(", "))}<br>${esc(payload.auctionType)} \xB7 ${esc(payload.monthlyVolume)} \xB7 ${esc(payload.teamSize)}<br>Requested start: ${esc(payload.timeline)}`;
   }
-  $("#loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if ($("#loginEmail").value.trim().toLowerCase() !== "auctioneer@hammerlist.app" || $("#loginPassword").value !== "demo123") return showToast("Use the demo credentials shown below the form");
+  var requestStoreKey = "hammerlist-account-requests";
+  var clientStoreKey = "hammerlist-client-accounts";
+  var adminSessionKey = "hammerlist-admin-session";
+  var platformMap = { HiBid: "auctionflex", Proxibid: "proxibid", eBay: "ebay" };
+  function loadAdminRequests() {
+    try {
+      return JSON.parse(localStorage.getItem(requestStoreKey) || "[]").map((request) => ({ ...request, status: request.status || "Pending" }));
+    } catch {
+      return [];
+    }
+  }
+  function saveAdminRequests(requests) {
+    localStorage.setItem(requestStoreKey, JSON.stringify(requests));
+  }
+  function seedAdminClients() {
+    return [{ accountId: "HL-JOHNSON", company: "Johnson Auction Company", email: "auctioneer@hammerlist.app", platforms: ["auctionflex"], status: "Active", users: 1, androidEnabled: true, createdAt: "2026-09-18T10:00:00Z" }];
+  }
+  function loadAdminClients() {
+    try {
+      const clients = JSON.parse(localStorage.getItem(clientStoreKey) || "[]");
+      if (clients.length) return clients;
+    } catch {
+    }
+    const seeded = seedAdminClients();
+    localStorage.setItem(clientStoreKey, JSON.stringify(seeded));
+    return seeded;
+  }
+  function saveAdminClients(clients) {
+    localStorage.setItem(clientStoreKey, JSON.stringify(clients));
+  }
+  function platformLabel(platform) {
+    return platformDefinitions[platform]?.label || platform;
+  }
+  function requestedPlatformKeys(request) {
+    return (request.platforms || []).map((platform) => platformMap[platform] || `custom:${platform}`);
+  }
+  function platformTags(platforms) {
+    return (platforms || []).map((platform) => `<span class="platform-tag">${esc(platformLabel(platform.replace(/^custom:/, "")))}</span>`).join("") || '<span class="platform-tag">Not configured</span>';
+  }
+  function requestStatusClass(status) {
+    return String(status || "Pending").toLowerCase().replace(/\s+/g, "-");
+  }
+  function adminStats() {
+    const requests = loadAdminRequests(), clients = loadAdminClients();
+    return { pending: requests.filter((r) => r.status === "Pending").length, clients: clients.filter((c) => c.status === "Active").length, platforms: new Set(clients.flatMap((c) => c.platforms || [])).size, android: clients.filter((c) => c.androidEnabled).length };
+  }
+  function adminStatsMarkup() {
+    const stats = adminStats();
+    return `<section class="admin-stats"><article class="admin-stat"><span>Pending requests</span><strong>${stats.pending}</strong></article><article class="admin-stat"><span>Active clients</span><strong>${stats.clients}</strong></article><article class="admin-stat"><span>Configured platforms</span><strong>${stats.platforms}</strong></article><article class="admin-stat"><span>Android enabled</span><strong>${stats.android}</strong></article></section>`;
+  }
+  function renderAdmin(route2 = "requests") {
+    $$(".admin-nav").forEach((button) => button.classList.toggle("active", button.dataset.adminRoute === route2));
+    const requests = loadAdminRequests(), clients = loadAdminClients();
+    if (route2 === "clients") {
+      $("#adminContent").innerHTML = `<header class="admin-page-head"><div><p class="eyebrow">Client management</p><h1>Client accounts</h1><p>Review active companies and maintain their publishing configuration.</p></div></header>${adminStatsMarkup()}<section class="admin-client-grid">${clients.map((client) => `<article class="admin-client-card"><div class="admin-client-head"><h3>${esc(client.company)}</h3><span class="status-pill ${requestStatusClass(client.status)}">${esc(client.status)}</span></div><p>${esc(client.email)}</p><div class="platform-tags">${platformTags(client.platforms)}</div><div class="admin-client-meta"><div><small>Team users</small><strong>${client.users || 1}</strong></div><div><small>Android app</small><strong>${client.androidEnabled ? "Enabled" : "Not enabled"}</strong></div></div><button class="btn secondary" type="button" data-configure-client="${esc(client.accountId)}">Configure account</button></article>`).join("")}</section>`;
+      return;
+    }
+    $("#adminContent").innerHTML = `<header class="admin-page-head"><div><p class="eyebrow">Company onboarding</p><h1>Account requests</h1><p>Approve new companies and assign the platforms available in their workspace.</p></div></header>${adminStatsMarkup()}<section class="admin-panel"><header class="admin-panel-head"><h2>Onboarding queue</h2><span>${requests.length} total request${requests.length === 1 ? "" : "s"}</span></header>${requests.length ? `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Company</th><th>Platforms</th><th>Start window</th><th>Status</th><th></th></tr></thead><tbody>${requests.slice().reverse().map((request) => `<tr><td class="admin-company"><strong>${esc(request.company)}</strong><span>${esc(request.contactName)} \xB7 ${esc(request.email)}</span></td><td><div class="platform-tags">${platformTags(requestedPlatformKeys(request))}</div></td><td>${esc(request.timeline || "Not specified")}</td><td><span class="status-pill ${requestStatusClass(request.status)}">${esc(request.status)}</span></td><td><button class="btn secondary" type="button" data-review-request="${esc(request.requestId)}">Review</button></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty-admin"><strong>No account requests yet</strong><span>New requests from the corporate website will appear here.</span></div>`}</section>`;
+  }
+  function adminPlatformOptions(selected = []) {
+    const options = [["auctionflex", "HiBid / Auction Flex"], ["proxibid", "Proxibid"], ["ebay", "eBay"], ["universal", "Universal CSV"]];
+    return options.map(([value, label]) => `<label><input type="checkbox" name="adminPlatform" value="${value}" ${selected.includes(value) ? "checked" : ""}>${label}</label>`).join("");
+  }
+  function openAdminRequest(requestId) {
+    const request = loadAdminRequests().find((entry) => entry.requestId === requestId);
+    if (!request) return;
+    const selected = requestedPlatformKeys(request).filter((platform) => !platform.startsWith("custom:"));
+    $("#adminRequestContent").innerHTML = `<header class="dialog-head"><div><p class="eyebrow">${esc(request.requestId)}</p><h2>${esc(request.company)}</h2><p class="muted">Submitted ${new Date(request.createdAt).toLocaleString()}</p></div><button type="button" class="icon-btn" data-close="adminRequestDialog">\xD7</button></header><div class="dialog-body"><div class="admin-detail-grid"><div class="admin-detail"><small>Contact</small><strong>${esc(request.contactName)}</strong><span>${esc(request.email)} \xB7 ${esc(request.phone)}</span></div><div class="admin-detail"><small>Operation</small><strong>${esc(request.auctionType)}</strong><span>${esc(request.monthlyVolume)} \xB7 ${esc(request.teamSize)}</span></div><div class="admin-detail"><small>Current software</small><strong>${esc(request.currentSoftware || "Not specified")}</strong><span>${esc(request.website || request.serviceArea || "")}</span></div><div class="admin-detail"><small>Requested start</small><strong>${esc(request.timeline)}</strong><span>Android: ${esc(request.androidApp)}</span></div><div class="admin-detail full"><small>Notes</small><strong>${esc(request.notes || "No additional notes supplied.")}</strong></div></div><fieldset class="admin-platform-config"><legend>Workspace publishing configuration</legend><div class="admin-platform-checks">${adminPlatformOptions(selected)}</div></fieldset></div><footer class="dialog-foot"><span class="status-pill ${requestStatusClass(request.status)}">${esc(request.status)}</span><span class="spacer"></span><div class="admin-dialog-actions"><button class="btn primary" type="button" data-approve-request="${esc(request.requestId)}">Approve & create client</button><button class="btn secondary danger" type="button" data-decline-request="${esc(request.requestId)}">Decline</button></div></footer>`;
+    $("#adminRequestDialog").showModal();
+  }
+  function openClientConfiguration(accountId) {
+    const client = loadAdminClients().find((entry) => entry.accountId === accountId);
+    if (!client) return;
+    $("#adminRequestContent").innerHTML = `<header class="dialog-head"><div><p class="eyebrow">${esc(client.accountId)}</p><h2>Configure ${esc(client.company)}</h2><p class="muted">Control the export destinations shown to this client.</p></div><button type="button" class="icon-btn" data-close="adminRequestDialog">\xD7</button></header><div class="dialog-body"><fieldset class="admin-platform-config"><legend>Enabled publishing platforms</legend><div class="admin-platform-checks">${adminPlatformOptions(client.platforms || [])}</div></fieldset><label class="toggle-row"><input id="adminAndroidEnabled" type="checkbox" ${client.androidEnabled ? "checked" : ""}><span><strong>Android field app</strong><small>Allow this company to use the native mobile workflow.</small></span></label></div><footer class="dialog-foot"><button class="btn secondary" type="button" data-close="adminRequestDialog">Cancel</button><span class="spacer"></span><button class="btn primary" type="button" data-save-client="${esc(client.accountId)}">Save configuration</button></footer>`;
+    $("#adminRequestDialog").showModal();
+  }
+  function selectedAdminPlatforms() {
+    return $$('input[name="adminPlatform"]:checked').map((input) => input.value);
+  }
+  function approveRequest(requestId) {
+    const requests = loadAdminRequests(), request = requests.find((entry) => entry.requestId === requestId);
+    if (!request) return;
+    request.status = "Approved";
+    request.reviewedAt = (/* @__PURE__ */ new Date()).toISOString();
+    request.platformConfiguration = selectedAdminPlatforms();
+    saveAdminRequests(requests);
+    const clients = loadAdminClients(), existing = clients.find((client) => client.email.toLowerCase() === request.email.toLowerCase());
+    const account = { accountId: existing?.accountId || `HL-${request.company.replace(/[^a-z0-9]/gi, "").slice(0, 10).toUpperCase()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`, company: request.company, email: request.email, platforms: request.platformConfiguration, status: "Active", users: Number.parseInt(request.teamSize) || 1, androidEnabled: request.androidApp !== "No", createdAt: existing?.createdAt || (/* @__PURE__ */ new Date()).toISOString() };
+    if (existing) clients[clients.indexOf(existing)] = account;
+    else clients.push(account);
+    saveAdminClients(clients);
+    $("#adminRequestDialog").close();
+    renderAdmin("requests");
+    showToast(`${request.company} approved and client account created`);
+  }
+  function declineRequest(requestId) {
+    const requests = loadAdminRequests(), request = requests.find((entry) => entry.requestId === requestId);
+    if (!request) return;
+    request.status = "Declined";
+    request.reviewedAt = (/* @__PURE__ */ new Date()).toISOString();
+    saveAdminRequests(requests);
+    $("#adminRequestDialog").close();
+    renderAdmin("requests");
+    showToast("Account request declined");
+  }
+  function saveClientConfiguration(accountId) {
+    const clients = loadAdminClients(), client = clients.find((entry) => entry.accountId === accountId);
+    if (!client) return;
+    client.platforms = selectedAdminPlatforms();
+    client.androidEnabled = $("#adminAndroidEnabled").checked;
+    saveAdminClients(clients);
+    $("#adminRequestDialog").close();
+    renderAdmin("clients");
+    showToast("Client configuration saved");
+  }
+  function startAdmin() {
+    if (isNative) return;
+    $("#loginView").classList.add("hidden");
+    $("#appView").classList.add("hidden");
+    $("#adminView").classList.remove("hidden");
+    renderAdmin("requests");
+    finishBoot();
+  }
+  function adminLogout() {
+    sessionStorage.removeItem(adminSessionKey);
+    $("#adminView").classList.add("hidden");
+    $("#loginView").classList.remove("hidden");
+    window.scrollTo({ top: 0 });
+  }
+  async function authenticateClient(email, password) {
+    if (email.trim().toLowerCase() !== "auctioneer@hammerlist.app" || password !== "demo123") return showToast("Use the demo credentials shown on the sign-in screen");
     await Promise.race([stateReady, new Promise((resolve2) => setTimeout(resolve2, 1200))]);
     if (!state) state = freshSeed();
-    authStore.setItem("hammerlist-session", $("#loginEmail").value.trim());
+    authStore.setItem("hammerlist-session", email.trim());
     if ($("#loginDialog").open) $("#loginDialog").close();
     startApp();
+  }
+  $("#loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    authenticateClient($("#loginEmail").value, $("#loginPassword").value);
+  });
+  $("#nativeLoginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    authenticateClient($("#nativeLoginEmail").value, $("#nativeLoginPassword").value);
+  });
+  $("#adminLoginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if ($("#adminEmail").value.trim().toLowerCase() !== "admin@hammerlist.app" || $("#adminPassword").value !== "admin123") return showToast("Use the administrator demo credentials shown below the form");
+    sessionStorage.setItem(adminSessionKey, $("#adminEmail").value.trim());
+    $("#adminLoginDialog").close();
+    startAdmin();
   });
   function finishBoot() {
     $("#bootView").classList.add("hidden");
@@ -2667,6 +2824,7 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
   }
   function startApp(keepBoot = false) {
     $("#loginView").classList.add("hidden");
+    $("#adminView").classList.add("hidden");
     $("#appView").classList.remove("hidden");
     $("#signedInEmail").textContent = authStore.getItem("hammerlist-session") || "auctioneer@hammerlist.app";
     render();
@@ -2681,6 +2839,7 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
   }
   $("#logoutBtn").onclick = logout;
   $("#profileBtn").onclick = logout;
+  $("#adminSignOut").onclick = adminLogout;
   $("#menuBtn").onclick = () => $("#sidebar").classList.toggle("open");
   $("#auctionSelect").onchange = async (e) => {
     state.selectedAuctionId = e.target.value;
@@ -2698,6 +2857,19 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
       $("#loginDialog").showModal();
     }
     if (e.target.closest("[data-open-request]")) openAccountRequest();
+    if (e.target.closest("[data-open-admin]") && !isNative) $("#adminLoginDialog").showModal();
+    const adminRoute = e.target.closest("[data-admin-route]")?.dataset.adminRoute;
+    if (adminRoute) renderAdmin(adminRoute);
+    const review = e.target.closest("[data-review-request]")?.dataset.reviewRequest;
+    if (review) openAdminRequest(review);
+    const approve = e.target.closest("[data-approve-request]")?.dataset.approveRequest;
+    if (approve) approveRequest(approve);
+    const decline = e.target.closest("[data-decline-request]")?.dataset.declineRequest;
+    if (decline) declineRequest(decline);
+    const configure = e.target.closest("[data-configure-client]")?.dataset.configureClient;
+    if (configure) openClientConfiguration(configure);
+    const saveClient = e.target.closest("[data-save-client]")?.dataset.saveClient;
+    if (saveClient) saveClientConfiguration(saveClient);
     const action = e.target.closest("[data-action]")?.dataset.action;
     if (action === "new-auction") openAuctionDialog();
     if (action === "add-item") openItem();
@@ -2817,7 +2989,8 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
     App.addListener("appRestoredResult", restoreCameraResult);
   }
   stateReady.then(() => {
-    if (authStore.getItem("hammerlist-session")) {
+    if (!isNative && sessionStorage.getItem(adminSessionKey)) startAdmin();
+    else if (authStore.getItem("hammerlist-session")) {
       const restoring = Boolean(pendingCamera());
       startApp(restoring);
       if (restoring) setTimeout(finishBoot, 5e3);
