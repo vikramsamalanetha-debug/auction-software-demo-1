@@ -567,6 +567,58 @@
     }
   });
 
+  // node_modules/@capacitor/app/dist/esm/web.js
+  var web_exports = {};
+  __export(web_exports, {
+    AppWeb: () => AppWeb
+  });
+  var AppWeb;
+  var init_web = __esm({
+    "node_modules/@capacitor/app/dist/esm/web.js"() {
+      init_dist();
+      AppWeb = class extends WebPlugin {
+        constructor() {
+          super();
+          this.handleVisibilityChange = () => {
+            const data = {
+              isActive: document.hidden !== true
+            };
+            this.notifyListeners("appStateChange", data);
+            if (document.hidden) {
+              this.notifyListeners("pause", null);
+            } else {
+              this.notifyListeners("resume", null);
+            }
+          };
+          document.addEventListener("visibilitychange", this.handleVisibilityChange, false);
+        }
+        exitApp() {
+          throw this.unimplemented("Not implemented on web.");
+        }
+        async getInfo() {
+          throw this.unimplemented("Not implemented on web.");
+        }
+        async getLaunchUrl() {
+          return { url: "" };
+        }
+        async getState() {
+          return { isActive: document.hidden !== true };
+        }
+        async minimizeApp() {
+          throw this.unimplemented("Not implemented on web.");
+        }
+        async toggleBackButtonHandler() {
+          throw this.unimplemented("Not implemented on web.");
+        }
+        async getAppLanguage() {
+          return {
+            value: navigator.language.split("-")[0].toLowerCase()
+          };
+        }
+      };
+    }
+  });
+
   // node_modules/@capacitor/filesystem/dist/esm/definitions.js
   var Directory, Encoding;
   var init_definitions = __esm({
@@ -591,8 +643,8 @@
   });
 
   // node_modules/@capacitor/filesystem/dist/esm/web.js
-  var web_exports = {};
-  __export(web_exports, {
+  var web_exports2 = {};
+  __export(web_exports2, {
     FilesystemWeb: () => FilesystemWeb
   });
   function resolve(path) {
@@ -615,7 +667,7 @@
     return parent !== children && pathsA.every((value, index) => value === pathsB[index]);
   }
   var FilesystemWeb;
-  var init_web = __esm({
+  var init_web2 = __esm({
     "node_modules/@capacitor/filesystem/dist/esm/web.js"() {
       init_dist();
       init_definitions();
@@ -1164,12 +1216,12 @@
   });
 
   // node_modules/@capacitor/share/dist/esm/web.js
-  var web_exports2 = {};
-  __export(web_exports2, {
+  var web_exports3 = {};
+  __export(web_exports3, {
     ShareWeb: () => ShareWeb
   });
   var ShareWeb;
-  var init_web2 = __esm({
+  var init_web3 = __esm({
     "node_modules/@capacitor/share/dist/esm/web.js"() {
       init_dist();
       ShareWeb = class extends WebPlugin {
@@ -1197,6 +1249,12 @@
 
   // src/app.js
   init_dist();
+
+  // node_modules/@capacitor/app/dist/esm/index.js
+  init_dist();
+  var App = registerPlugin("App", {
+    web: () => Promise.resolve().then(() => (init_web(), web_exports)).then((m) => new m.AppWeb())
+  });
 
   // node_modules/@capacitor/camera/dist/esm/index.js
   init_dist();
@@ -1794,14 +1852,14 @@
   // node_modules/@capacitor/filesystem/dist/esm/index.js
   init_definitions();
   var Filesystem = registerPlugin("Filesystem", {
-    web: () => Promise.resolve().then(() => (init_web(), web_exports)).then((m) => new m.FilesystemWeb())
+    web: () => Promise.resolve().then(() => (init_web2(), web_exports2)).then((m) => new m.FilesystemWeb())
   });
   f();
 
   // node_modules/@capacitor/share/dist/esm/index.js
   init_dist();
   var Share = registerPlugin("Share", {
-    web: () => Promise.resolve().then(() => (init_web2(), web_exports2)).then((m) => new m.ShareWeb())
+    web: () => Promise.resolve().then(() => (init_web3(), web_exports3)).then((m) => new m.ShareWeb())
   });
 
   // src/app.js
@@ -1821,8 +1879,23 @@
   var working = false;
   var visionModelPromise = null;
   var isNative = Capacitor.isNativePlatform();
+  var authStore = isNative ? localStorage : sessionStorage;
   var apiBase = String(globalThis.HAMMERLIST_API_BASE_URL || "").replace(/\/+$/, "");
   var apiUrl = (path) => apiBase ? `${apiBase}${path}` : `.${path}`;
+  var pendingCameraKey = "hammerlist-pending-camera";
+  function rememberCamera(action) {
+    localStorage.setItem(pendingCameraKey, JSON.stringify({ action, kind: itemKind(), auctionId: state?.selectedAuctionId || "" }));
+  }
+  function clearPendingCamera() {
+    localStorage.removeItem(pendingCameraKey);
+  }
+  function pendingCamera() {
+    try {
+      return JSON.parse(localStorage.getItem(pendingCameraKey) || "null");
+    } catch {
+      return null;
+    }
+  }
   function nativeCancelled(error) {
     return /cancel|user cancelled|user canceled/i.test(String(error?.message || error || ""));
   }
@@ -1834,10 +1907,13 @@
   }
   async function takeNativeItemPhoto() {
     if (working) return;
+    rememberCamera("item");
     try {
-      const photo = await Camera2.getPhoto({ source: CameraSource.Camera, resultType: CameraResultType.Uri, quality: 88, width: 1800, correctOrientation: true, saveToGallery: false });
+      const photo = await Camera2.getPhoto({ source: CameraSource.Camera, resultType: CameraResultType.Uri, quality: 82, width: 1400, correctOrientation: true, saveToGallery: false });
       await addFiles([await nativePhotoFile(photo, "item")]);
+      clearPendingCamera();
     } catch (error) {
+      clearPendingCamera();
       if (!nativeCancelled(error)) showToast(error.message || "The camera could not be opened.");
     }
   }
@@ -1845,21 +1921,27 @@
     if (working) return;
     const remaining = 8 - draftPhotos.length;
     if (!remaining) return showToast("Eight photos is the limit for one item");
+    rememberCamera("library");
     try {
-      const result = await Camera2.pickImages({ quality: 88, width: 1800, correctOrientation: true, limit: remaining });
+      const result = await Camera2.pickImages({ quality: 82, width: 1400, correctOrientation: true, limit: remaining });
       const files = [];
       for (const photo of result.photos || []) files.push(await nativePhotoFile(photo, "item"));
       await addFiles(files);
+      clearPendingCamera();
     } catch (error) {
+      clearPendingCamera();
       if (!nativeCancelled(error)) showToast(error.message || "The photo library could not be opened.");
     }
   }
   async function takeNativeVinPhoto() {
     if (working) return;
+    rememberCamera("vin");
     try {
-      const photo = await Camera2.getPhoto({ source: CameraSource.Camera, resultType: CameraResultType.Uri, quality: 94, width: 2200, correctOrientation: true, saveToGallery: false });
+      const photo = await Camera2.getPhoto({ source: CameraSource.Camera, resultType: CameraResultType.Uri, quality: 90, width: 1800, correctOrientation: true, saveToGallery: false });
       await scanVinCamera([await nativePhotoFile(photo, "vin")]);
+      clearPendingCamera();
     } catch (error) {
+      clearPendingCamera();
       if (!nativeCancelled(error)) $("#vinMessage").textContent = error.message || "The camera could not be opened.";
     }
   }
@@ -2427,17 +2509,18 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
     if ($("#loginEmail").value.trim().toLowerCase() !== "auctioneer@hammerlist.app" || $("#loginPassword").value !== "demo123") return showToast("Use the demo credentials shown below the form");
     await Promise.race([stateReady, new Promise((resolve2) => setTimeout(resolve2, 1200))]);
     if (!state) state = freshSeed();
-    sessionStorage.setItem("hammerlist-session", $("#loginEmail").value.trim());
+    authStore.setItem("hammerlist-session", $("#loginEmail").value.trim());
     startApp();
   });
   function startApp() {
     $("#loginView").classList.add("hidden");
     $("#appView").classList.remove("hidden");
-    $("#signedInEmail").textContent = sessionStorage.getItem("hammerlist-session") || "auctioneer@hammerlist.app";
+    $("#signedInEmail").textContent = authStore.getItem("hammerlist-session") || "auctioneer@hammerlist.app";
     render();
   }
   function logout() {
-    sessionStorage.removeItem("hammerlist-session");
+    authStore.removeItem("hammerlist-session");
+    clearPendingCamera();
     $("#appView").classList.add("hidden");
     $("#loginView").classList.remove("hidden");
   }
@@ -2499,6 +2582,39 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
   $("#exportForm").addEventListener("submit", downloadCatalogPackage);
   $("#exportPlatform").onchange = renderExportSummary;
   $("#mobileAdd").onclick = openItem;
+  var stateReady = loadState();
+  async function restoreCameraResult(result) {
+    const context = pendingCamera();
+    if (result.pluginId !== "Camera" || !context) return;
+    if (!result.success || !result.data) {
+      clearPendingCamera();
+      return;
+    }
+    try {
+      await stateReady;
+      if (!state) state = freshSeed();
+      if (context.auctionId && state.auctions.some((a) => a.id === context.auctionId)) state.selectedAuctionId = context.auctionId;
+      if (authStore.getItem("hammerlist-session")) startApp();
+      openItem();
+      setItemKind(context.kind || "estate");
+      if (context.action === "library") {
+        const files = [];
+        for (const photo of result.data.photos || []) files.push(await nativePhotoFile(photo, "item"));
+        await addFiles(files);
+      } else {
+        const file = await nativePhotoFile(result.data, context.action === "vin" ? "vin" : "item");
+        if (context.action === "vin") {
+          showDetailsStep();
+          await scanVinCamera([file]);
+        } else await addFiles([file]);
+      }
+      showToast("Camera photo recovered");
+    } catch (error) {
+      showToast(error.message || "The camera photo could not be restored.");
+    } finally {
+      clearPendingCamera();
+    }
+  }
   if (isNative) {
     $("#takePhotoControl").addEventListener("click", (event) => {
       event.preventDefault();
@@ -2512,10 +2628,10 @@ For other platforms: use catalog.csv as the platform-ready working file and conf
       event.preventDefault();
       takeNativeVinPhoto();
     });
+    App.addListener("appRestoredResult", restoreCameraResult);
   }
-  var stateReady = loadState();
   stateReady.then(() => {
-    if (sessionStorage.getItem("hammerlist-session")) startApp();
+    if (authStore.getItem("hammerlist-session")) startApp();
   }).catch(() => {
     state = freshSeed();
   });
