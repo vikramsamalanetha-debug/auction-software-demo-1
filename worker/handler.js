@@ -134,12 +134,26 @@ async function decodeVin(url) {
   return json({ vin, year: row.ModelYear || "", make: row.Make || "", model: row.Model || "", trim: row.Trim || row.Series || "", body: row.BodyClass || "", engine: [displacement, cylinders, row.EngineConfiguration, row.FuelTypePrimary].filter(Boolean).join(" · "), drive: row.DriveType || "", manufacturer: row.Manufacturer || "", plant: [row.PlantCity,row.PlantState,row.PlantCountry].filter(Boolean).join(", ") });
 }
 
+async function requestAccount(request, env) {
+  let body; try { body = await request.json(); } catch { return json({ error: "The account request was invalid." }, 400); }
+  const required = ["company", "contactName", "email", "phone", "platforms"];
+  if (required.some(key => !body[key] || (Array.isArray(body[key]) && !body[key].length))) return json({ error: "Complete the required company and platform information." }, 400);
+  if (!/^\S+@\S+\.\S+$/.test(String(body.email)) || JSON.stringify(body).length > 20_000) return json({ error: "Check the request details and try again." }, 400);
+  const requestId = `HL-${new Date().toISOString().slice(2,10).replaceAll("-","")}-${crypto.randomUUID().slice(0,5).toUpperCase()}`;
+  if (env.ACCOUNT_REQUEST_WEBHOOK_URL) {
+    const delivered = await fetch(env.ACCOUNT_REQUEST_WEBHOOK_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ type: "hammerlist.account_request", requestId, submittedAt: new Date().toISOString(), request: body }) });
+    if (!delivered.ok) return json({ error: "The request could not be delivered. Please try again." }, 502);
+  }
+  return json({ accepted: true, requestId, delivery: env.ACCOUNT_REQUEST_WEBHOOK_URL ? "routed" : "demo" }, 202);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/recognize" && request.method === "POST") return recognize(request, env);
     if (url.pathname === "/api/vin-scan" && request.method === "POST") return scanVin(request, env);
     if (url.pathname === "/api/vin" && request.method === "GET") return decodeVin(url);
+    if (url.pathname === "/api/account-request" && request.method === "POST") return requestAccount(request, env);
     if (url.pathname === "/manifest.webmanifest") return new Response(manifest, { headers: { "content-type": "application/manifest+json; charset=utf-8", "cache-control": "no-cache" } });
     if (url.pathname === "/sw.js") return new Response(serviceWorker, { headers: { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-cache", "service-worker-allowed": "/" } });
     if (url.pathname === "/icon-192.png") return new Response(iconBytes(icon192Base64), { headers: { "content-type": "image/png", "cache-control": "public, max-age=86400" } });
